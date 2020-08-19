@@ -1,0 +1,24 @@
+source ~/amber16/dat/leap/cmd/leaprc.constph
+source leaprc.water.tip3p
+source leaprc.gaff
+
+# Load the missing parameters
+loadamberparams lig/eugenol.frcmod
+# Load ligand
+loadoff lig/eugenol.lib
+# Load complex 
+mol = loadpdb rot_orig_wt_eol.pdb
+# Add S bonds
+bond mol.88.SG mol.106.SG
+bond mol.17.SG mol.49.SG
+
+# Now continue as normal
+solvateoct mol TIP3PBOX 10 
+charge mol
+addions2 mol Cl- 0
+addions2 mol Na+ 0
+
+saveamberparm mol eol.prmtop eol.rst7
+savepdb mol eol.pdb
+
+quit

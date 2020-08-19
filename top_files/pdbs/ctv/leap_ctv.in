@@ -1,0 +1,25 @@
+source ~/amber16/dat/leap/cmd/leaprc.constph
+source leaprc.water.tip3p
+source leaprc.gaff
+
+# Load the missing parameters
+loadamberparams lig/citralva.frcmod
+# Load ligand
+loadoff lig/citralva.lib
+# Load complex 
+mol = loadpdb orig_wt_ctv.pdb
+# Add S bonds
+bond mol.88.SG mol.106.SG
+bond mol.17.SG mol.49.SG
+
+
+# Now continue as normal
+solvateoct mol TIP3PBOX 10 
+charge mol
+addions2 mol Cl- 0
+addions2 mol Na+ 0
+
+saveamberparm mol ctv.prmtop ctv.rst7
+savepdb mol ctv.pdb
+
+quit
