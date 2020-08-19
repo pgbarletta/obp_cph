@@ -1,0 +1,1472 @@
+
+          -------------------------------------------------------
+          Amber 16 PMEMD                              2016
+          -------------------------------------------------------
+
+| PMEMD implementation of SANDER, Release 16
+
+| Run on 11/06/2017 at 12:45:15
+
+|   Executable path: /apps/amber16/bin/pmemd.cuda
+| Working directory: /home/pbarletta
+|          Hostname: mordor
+
+  [-O]verwriting output
+
+File Assignments:
+|   MDIN: /scratch/pbarletta/cph_obp/run/apo/mhe/e/24equ.in                     
+|  MDOUT: /scratch/pbarletta/cph_obp/run/apo/mhe/e/24equ.out                    
+| INPCRD: /scratch/pbarletta/cph_obp/run/apo/mhe/e/23eapo.rst7                  
+|   PARM: /scratch/pbarletta/cph_obp/top_files/apo.prmtop                       
+| RESTRT: /scratch/pbarletta/cph_obp/run/apo/mhe/e/24eapo.rst7                  
+|   REFC: /scratch/pbarletta/cph_obp/run/apo/mhe/e/23eapo.rst7                  
+|  MDVEL: mdvel                                                                 
+|   MDEN: mden                                                                  
+|  MDCRD: /scratch/pbarletta/cph_obp/run/apo/mhe/e/24eapo.nc                    
+| MDINFO: mdinfo                                                                
+|  MDFRC: mdfrc                                                                 
+
+
+ Here is the input file:
+
+Equilibration with solute restrictions                                         
+&cntrl                                                                         
+imin = 0,                           ! No Minimization                          
+nmropt = 0,                         ! No NMR restraints read                   
+                                                                               
+! Nature and format of the input                                               
+ntx = 5,                            ! Coordinates but no velocities will be rea
+irest = 1,                          ! Do not run a new simulation              
+                                                                               
+! Nature and format of the output                                              
+ntxo = 1,                           ! rstrt file in ASCII format               
+ntpr = 500,                         ! inf in output every ntpr steps           
+ntwr = 500,                         ! rstrt file every ntwr steps              
+ntwx = 500,                         ! mdcrd file every ntwx steps              
+ntwv = 0,                           ! mdvel without velocities                 
+ntwe = 0,                           ! Energies and temperatures not written in 
+idecomp = 0,                        ! No energy decomposition                  
+iwrap = 1,                          ! Coordinates of the restart and mdcrd file
+                                                                               
+! Frozen or restrained atoms                                                   
+ibelly = 0,                         ! No frozen atoms                          
+ntr=1,                              ! Harmonic potential restraints            
+restraint_wt = 0.14,                ! The weight for the positional restraints 
+restraintmask = ':1-119@N,CA,C,O',  ! restrained residues                      
+                                                                               
+! Molecular dynamics                                                           
+nstlim = 50000,                     ! Number of MD-steps                       
+dt = 0.002,                         ! Time step                                
+                                                                               
+! Temperature regulation                                                       
+ntt = 3,                            ! Langevin thermostat                      
+gamma_ln = 5,                       ! Gamma constant for Langevin              
+temp0 = 300.0,                      ! Reference T at which the system is to be 
+tempi = 300.0,                      ! Initial T                                
+ig = -1,                            ! Seed for the RNG                         
+                                                                               
+! P and V regulation                                                           
+ntp = 0,                            ! No pressure control                      
+ntb = 1,                            ! Periodic box for constant V              
+                                                                               
+! SHAKE variables                                                              
+ntc = 2,                            ! Bonds involving H are constrained        
+ntf = 2,                            ! Bond interaction involving H are ommited.
+                                                                               
+cut = 10.0,                         ! Nonbonded cutoff                         
+                                                                               
+/                                                                              
+&end                                                                           
+
+
+Note: ig = -1. Setting random seed to   573597 based on wallclock time in 
+      microseconds.
+| irandom = 1, using AMBER's internal random number generator (default).
+ 
+|--------------------- INFORMATION ----------------------
+| GPU (CUDA) Version of PMEMD in use: NVIDIA GPU IN USE.
+|                    Version 16.0.0
+| 
+|                      02/25/2016
+| 
+| Implementation by:
+|                    Ross C. Walker     (SDSC)
+|                    Scott Le Grand     (nVIDIA)
+| 
+| Precision model in use:
+|      [SPFP] - Single Precision Forces, 64-bit Fixed Point
+|               Accumulation. (Default)
+| 
+|--------------------------------------------------------
+ 
+|----------------- CITATION INFORMATION -----------------
+|
+|    When publishing work that utilized the CUDA version
+|    of AMBER, please cite the following in addition to
+|    the regular AMBER citations:
+|
+|  - Romelia Salomon-Ferrer; Andreas W. Goetz; Duncan
+|    Poole; Scott Le Grand; Ross C. Walker "Routine
+|    microsecond molecular dynamics simulations with
+|    AMBER - Part II: Particle Mesh Ewald", J. Chem.
+|    Theory Comput., 2013, 9 (9), pp3878-3888,
+|    DOI: 10.1021/ct400314y.
+|
+|  - Andreas W. Goetz; Mark J. Williamson; Dong Xu;
+|    Duncan Poole; Scott Le Grand; Ross C. Walker
+|    "Routine microsecond molecular dynamics simulations
+|    with AMBER - Part I: Generalized Born", J. Chem.
+|    Theory Comput., 2012, 8 (5), pp1542-1555.
+|
+|  - Scott Le Grand; Andreas W. Goetz; Ross C. Walker
+|    "SPFP: Speed without compromise - a mixed precision
+|    model for GPU accelerated molecular dynamics
+|    simulations.", Comp. Phys. Comm., 2013, 184
+|    pp374-380, DOI: 10.1016/j.cpc.2012.09.022
+|
+|--------------------------------------------------------
+ 
+|------------------- GPU DEVICE INFO --------------------
+|
+|            CUDA_VISIBLE_DEVICES: 3
+|   CUDA Capable Devices Detected:      1
+|           CUDA Device ID in use:      0
+|                CUDA Device Name: GeForce GTX 1080 Ti
+|     CUDA Device Global Mem Size:  11172 MB
+| CUDA Device Num Multiprocessors:     28
+|           CUDA Device Core Freq:   1.58 GHz
+|
+|--------------------------------------------------------
+ 
+ 
+| Conditional Compilation Defines Used:
+| PUBFFT
+| BINTRAJ
+| CUDA
+| EMIL
+
+| Largest sphere to fit in unit cell has radius =    24.825
+
+| New format PARM file being parsed.
+| Version =    1.000 Date = 11/06/17 Time = 09:43:47
+
+| Note: 1-4 EEL scale factors are being read from the topology file.
+
+| Note: 1-4 VDW scale factors are being read from the topology file.
+| Duplicated    0 dihedrals
+
+| Duplicated    0 dihedrals
+
+--------------------------------------------------------------------------------
+   1.  RESOURCE   USE: 
+--------------------------------------------------------------------------------
+
+ getting new box info from bottom of inpcrd
+ NATOM  =   14797 NTYPES =      17 NBONH =   13853 MBONA  =     953
+ NTHETH =    2337 MTHETA =    1282 NPHIH =    4475 MPHIA  =    3254
+ NHPARM =       0 NPARM  =       0 NNB   =   28051 NRES   =    4390
+ NBONA  =     953 NTHETA =    1282 NPHIA =    3254 NUMBND =      42
+ NUMANG =      92 NPTRA  =      39 NATYP =      28 NPHB   =       1
+ IFBOX  =       2 NMXRS  =      24 IFCAP =       0 NEXTRA =       0
+ NCOPY  =       0
+
+| Coordinate Index Table dimensions:     9    9    9
+| Direct force subcell size =     6.7566    6.7566    6.7566
+
+     BOX TYPE: TRUNCATED OCTAHEDRON
+
+--------------------------------------------------------------------------------
+   2.  CONTROL  DATA  FOR  THE  RUN
+--------------------------------------------------------------------------------
+
+default_name                                                                    
+
+General flags:
+     imin    =       0, nmropt  =       0
+
+Nature and format of input:
+     ntx     =       5, irest   =       1, ntrx    =       1
+
+Nature and format of output:
+     ntxo    =       1, ntpr    =     500, ntrx    =       1, ntwr    =     500
+     iwrap   =       1, ntwx    =     500, ntwv    =       0, ntwe    =       0
+     ioutfm  =       1, ntwprt  =       0, idecomp =       0, rbornstat=      0
+
+Potential function:
+     ntf     =       2, ntb     =       1, igb     =       0, nsnb    =      25
+     ipol    =       0, gbsa    =       0, iesp    =       0
+     dielc   =   1.00000, cut     =  10.00000, intdiel =   1.00000
+
+Frozen or restrained atoms:
+     ibelly  =       0, ntr     =       1
+     restraint_wt =   0.14000
+
+Molecular dynamics:
+     nstlim  =     50000, nscm    =         0, nrespa  =         1
+     t       =   0.00000, dt      =   0.00200, vlimit  =  -1.00000
+
+Langevin dynamics temperature regulation:
+     ig      =  573597
+     temp0   = 300.00000, tempi   = 300.00000, gamma_ln=   5.00000
+
+SHAKE:
+     ntc     =       2, jfastw  =       0
+     tol     =   0.00001
+
+| Intermolecular bonds treatment:
+|     no_intermolecular_bonds =       1
+
+| Energy averages sample interval:
+|     ene_avg_sampling =     500
+
+Ewald parameters:
+     verbose =       0, ew_type =       0, nbflag  =       1, use_pme =       1
+     vdwmeth =       1, eedmeth =       1, netfrc  =       1
+     Box X =   60.810   Box Y =   60.810   Box Z =   60.810
+     Alpha =  109.471   Beta  =  109.471   Gamma =  109.471
+     NFFT1 =   64       NFFT2 =   64       NFFT3 =   64
+     Cutoff=   10.000   Tol   =0.100E-04
+     Ewald Coefficient =  0.27511
+     Interpolation order =    4
+
+    LOADING THE CONSTRAINED ATOMS AS GROUPS
+
+
+   5.  REFERENCE ATOM COORDINATES
+
+  default_name                                                                    
+     Mask :1-119@N,CA,C,O; matches   476 atoms
+
+--------------------------------------------------------------------------------
+   3.  ATOMIC COORDINATES AND VELOCITIES
+--------------------------------------------------------------------------------
+
+default_name                                                                    
+ begin time read from input coords =  2440.000 ps
+
+ 
+ Number of triangulated 3-point waters found:     4270
+
+     Sum of charges from parm topology file =  -0.00000006
+     Forcing neutrality...
+
+| Dynamic Memory, Types Used:
+| Reals              574581
+| Integers           547196
+
+| Nonbonded Pairs Initial Allocation:     4475722
+
+| GPU memory information (estimate):
+| KB of GPU memory in use:    140885
+| KB of CPU memory in use:     29237
+
+--------------------------------------------------------------------------------
+   4.  RESULTS
+--------------------------------------------------------------------------------
+
+ ---------------------------------------------------
+ APPROXIMATING switch and d/dx switch using CUBIC SPLINE INTERPOLATION
+ using   5000.0 points per unit in tabled values
+ TESTING RELATIVE ERROR over r ranging from 0.0 to cutoff
+| CHECK switch(x): max rel err =   0.2738E-14   at   2.422500
+| CHECK d/dx switch(x): max rel err =   0.8314E-11   at   2.736960
+ ---------------------------------------------------
+|---------------------------------------------------
+| APPROXIMATING direct energy using CUBIC SPLINE INTERPOLATION
+|  with   50.0 points per unit in tabled values
+| Relative Error Limit not exceeded for r .gt.   2.33
+| APPROXIMATING direct force using CUBIC SPLINE INTERPOLATION
+|  with   50.0 points per unit in tabled values
+| Relative Error Limit not exceeded for r .gt.   2.80
+|---------------------------------------------------
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =      500   TIME(PS) =    2441.000  TEMP(K) =   300.29  PRESS =     0.0
+ Etot   =    -34126.5725  EKtot   =      9111.5322  EPtot      =    -43238.1047
+ BOND   =       357.6872  ANGLE   =      1043.8072  DIHED      =      1346.7143
+ 1-4 NB =       441.7070  1-4 EEL =      6285.0350  VDWAALS    =      4829.6381
+ EELEC  =    -57555.2153  EHBOND  =         0.0000  RESTRAINT  =        12.5217
+ EAMBER (non-restraint)  =    -43250.6265
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     1000   TIME(PS) =    2442.000  TEMP(K) =   301.03  PRESS =     0.0
+ Etot   =    -34265.2224  EKtot   =      9133.8662  EPtot      =    -43399.0886
+ BOND   =       359.7412  ANGLE   =      1009.2290  DIHED      =      1349.7554
+ 1-4 NB =       431.3141  1-4 EEL =      6264.0079  VDWAALS    =      4726.0901
+ EELEC  =    -57552.6369  EHBOND  =         0.0000  RESTRAINT  =        13.4106
+ EAMBER (non-restraint)  =    -43412.4992
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     1500   TIME(PS) =    2443.000  TEMP(K) =   297.59  PRESS =     0.0
+ Etot   =    -34273.3958  EKtot   =      9029.4736  EPtot      =    -43302.8694
+ BOND   =       362.5789  ANGLE   =      1120.7925  DIHED      =      1329.6771
+ 1-4 NB =       440.0497  1-4 EEL =      6291.8585  VDWAALS    =      4884.8573
+ EELEC  =    -57744.7395  EHBOND  =         0.0000  RESTRAINT  =        12.0560
+ EAMBER (non-restraint)  =    -43314.9254
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     2000   TIME(PS) =    2444.000  TEMP(K) =   297.69  PRESS =     0.0
+ Etot   =    -34323.8274  EKtot   =      9032.6260  EPtot      =    -43356.4533
+ BOND   =       350.7398  ANGLE   =      1050.0487  DIHED      =      1337.6731
+ 1-4 NB =       455.0453  1-4 EEL =      6295.1741  VDWAALS    =      4792.3168
+ EELEC  =    -57651.5837  EHBOND  =         0.0000  RESTRAINT  =        14.1327
+ EAMBER (non-restraint)  =    -43370.5860
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     2500   TIME(PS) =    2445.000  TEMP(K) =   298.64  PRESS =     0.0
+ Etot   =    -34243.7510  EKtot   =      9061.3359  EPtot      =    -43305.0869
+ BOND   =       333.3325  ANGLE   =      1063.5481  DIHED      =      1339.5770
+ 1-4 NB =       442.2492  1-4 EEL =      6278.1207  VDWAALS    =      4558.9782
+ EELEC  =    -57334.7960  EHBOND  =         0.0000  RESTRAINT  =        13.9034
+ EAMBER (non-restraint)  =    -43318.9903
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     3000   TIME(PS) =    2446.000  TEMP(K) =   302.86  PRESS =     0.0
+ Etot   =    -34153.7657  EKtot   =      9189.4590  EPtot      =    -43343.2246
+ BOND   =       357.3372  ANGLE   =      1014.4007  DIHED      =      1361.7385
+ 1-4 NB =       448.3550  1-4 EEL =      6306.3948  VDWAALS    =      4635.5172
+ EELEC  =    -57485.2873  EHBOND  =         0.0000  RESTRAINT  =        18.3192
+ EAMBER (non-restraint)  =    -43361.5439
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     3500   TIME(PS) =    2447.000  TEMP(K) =   297.54  PRESS =     0.0
+ Etot   =    -34328.2274  EKtot   =      9028.1689  EPtot      =    -43356.3963
+ BOND   =       345.2341  ANGLE   =      1053.7057  DIHED      =      1339.3368
+ 1-4 NB =       436.0601  1-4 EEL =      6332.4732  VDWAALS    =      4713.1972
+ EELEC  =    -57592.2827  EHBOND  =         0.0000  RESTRAINT  =        15.8792
+ EAMBER (non-restraint)  =    -43372.2756
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     4000   TIME(PS) =    2448.000  TEMP(K) =   303.77  PRESS =     0.0
+ Etot   =    -34247.4345  EKtot   =      9217.1543  EPtot      =    -43464.5888
+ BOND   =       353.4903  ANGLE   =      1028.6321  DIHED      =      1353.7715
+ 1-4 NB =       434.5517  1-4 EEL =      6301.8931  VDWAALS    =      4871.5733
+ EELEC  =    -57825.1214  EHBOND  =         0.0000  RESTRAINT  =        16.6206
+ EAMBER (non-restraint)  =    -43481.2095
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     4500   TIME(PS) =    2449.000  TEMP(K) =   298.07  PRESS =     0.0
+ Etot   =    -34529.9029  EKtot   =      9044.3135  EPtot      =    -43574.2164
+ BOND   =       314.4509  ANGLE   =      1038.8640  DIHED      =      1356.9191
+ 1-4 NB =       434.8717  1-4 EEL =      6276.4315  VDWAALS    =      4778.4443
+ EELEC  =    -57790.6232  EHBOND  =         0.0000  RESTRAINT  =        16.4253
+ EAMBER (non-restraint)  =    -43590.6417
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     5000   TIME(PS) =    2450.000  TEMP(K) =   299.72  PRESS =     0.0
+ Etot   =    -34312.0970  EKtot   =      9094.1660  EPtot      =    -43406.2631
+ BOND   =       343.5747  ANGLE   =      1076.1293  DIHED      =      1350.1094
+ 1-4 NB =       437.2629  1-4 EEL =      6319.8684  VDWAALS    =      4646.4609
+ EELEC  =    -57598.2876  EHBOND  =         0.0000  RESTRAINT  =        18.6189
+ EAMBER (non-restraint)  =    -43424.8820
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     5500   TIME(PS) =    2451.000  TEMP(K) =   295.65  PRESS =     0.0
+ Etot   =    -34293.6469  EKtot   =      8970.7861  EPtot      =    -43264.4330
+ BOND   =       344.6725  ANGLE   =      1107.2081  DIHED      =      1349.8878
+ 1-4 NB =       425.8909  1-4 EEL =      6256.8406  VDWAALS    =      4654.7623
+ EELEC  =    -57419.9594  EHBOND  =         0.0000  RESTRAINT  =        16.2641
+ EAMBER (non-restraint)  =    -43280.6972
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     6000   TIME(PS) =    2452.000  TEMP(K) =   301.77  PRESS =     0.0
+ Etot   =    -34077.5797  EKtot   =      9156.5098  EPtot      =    -43234.0895
+ BOND   =       382.0343  ANGLE   =      1039.4243  DIHED      =      1350.2105
+ 1-4 NB =       433.0168  1-4 EEL =      6301.9165  VDWAALS    =      4633.1773
+ EELEC  =    -57387.8853  EHBOND  =         0.0000  RESTRAINT  =        14.0161
+ EAMBER (non-restraint)  =    -43248.1055
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     6500   TIME(PS) =    2453.000  TEMP(K) =   299.71  PRESS =     0.0
+ Etot   =    -34015.1595  EKtot   =      9093.7920  EPtot      =    -43108.9515
+ BOND   =       368.2490  ANGLE   =      1097.9285  DIHED      =      1347.7805
+ 1-4 NB =       437.6472  1-4 EEL =      6289.2725  VDWAALS    =      4728.1579
+ EELEC  =    -57393.6507  EHBOND  =         0.0000  RESTRAINT  =        15.6636
+ EAMBER (non-restraint)  =    -43124.6151
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     7000   TIME(PS) =    2454.000  TEMP(K) =   300.71  PRESS =     0.0
+ Etot   =    -34330.6845  EKtot   =      9124.3799  EPtot      =    -43455.0643
+ BOND   =       378.0057  ANGLE   =      1011.3687  DIHED      =      1356.1404
+ 1-4 NB =       439.6571  1-4 EEL =      6289.8908  VDWAALS    =      4811.7669
+ EELEC  =    -57759.2604  EHBOND  =         0.0000  RESTRAINT  =        17.3665
+ EAMBER (non-restraint)  =    -43472.4309
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     7500   TIME(PS) =    2455.000  TEMP(K) =   299.36  PRESS =     0.0
+ Etot   =    -34349.1762  EKtot   =      9083.1982  EPtot      =    -43432.3744
+ BOND   =       376.8087  ANGLE   =      1079.6638  DIHED      =      1338.7610
+ 1-4 NB =       440.5013  1-4 EEL =      6301.7573  VDWAALS    =      4812.6226
+ EELEC  =    -57799.5314  EHBOND  =         0.0000  RESTRAINT  =        17.0423
+ EAMBER (non-restraint)  =    -43449.4167
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     8000   TIME(PS) =    2456.000  TEMP(K) =   299.13  PRESS =     0.0
+ Etot   =    -34298.8784  EKtot   =      9076.3164  EPtot      =    -43375.1948
+ BOND   =       338.1092  ANGLE   =      1082.0367  DIHED      =      1349.0923
+ 1-4 NB =       433.6683  1-4 EEL =      6288.8314  VDWAALS    =      4776.6165
+ EELEC  =    -57660.3456  EHBOND  =         0.0000  RESTRAINT  =        16.7964
+ EAMBER (non-restraint)  =    -43391.9913
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     8500   TIME(PS) =    2457.000  TEMP(K) =   297.64  PRESS =     0.0
+ Etot   =    -34507.6167  EKtot   =      9031.0000  EPtot      =    -43538.6167
+ BOND   =       326.1783  ANGLE   =      1032.5759  DIHED      =      1337.7495
+ 1-4 NB =       450.4431  1-4 EEL =      6296.7230  VDWAALS    =      4807.1608
+ EELEC  =    -57804.0302  EHBOND  =         0.0000  RESTRAINT  =        14.5831
+ EAMBER (non-restraint)  =    -43553.1997
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     9000   TIME(PS) =    2458.000  TEMP(K) =   297.68  PRESS =     0.0
+ Etot   =    -34281.7747  EKtot   =      9032.3076  EPtot      =    -43314.0824
+ BOND   =       367.3139  ANGLE   =      1026.6721  DIHED      =      1342.8776
+ 1-4 NB =       433.0828  1-4 EEL =      6289.0229  VDWAALS    =      4839.7024
+ EELEC  =    -57630.8063  EHBOND  =         0.0000  RESTRAINT  =        18.0523
+ EAMBER (non-restraint)  =    -43332.1346
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =     9500   TIME(PS) =    2459.000  TEMP(K) =   296.74  PRESS =     0.0
+ Etot   =    -34495.2742  EKtot   =      9003.9512  EPtot      =    -43499.2253
+ BOND   =       338.1680  ANGLE   =      1061.2839  DIHED      =      1340.2192
+ 1-4 NB =       432.5347  1-4 EEL =      6305.7040  VDWAALS    =      4632.1555
+ EELEC  =    -57625.6256  EHBOND  =         0.0000  RESTRAINT  =        16.3350
+ EAMBER (non-restraint)  =    -43515.5603
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    10000   TIME(PS) =    2460.000  TEMP(K) =   299.27  PRESS =     0.0
+ Etot   =    -34271.3656  EKtot   =      9080.7246  EPtot      =    -43352.0902
+ BOND   =       316.4212  ANGLE   =      1043.0203  DIHED      =      1348.9031
+ 1-4 NB =       440.6609  1-4 EEL =      6314.6086  VDWAALS    =      4778.5740
+ EELEC  =    -57611.1705  EHBOND  =         0.0000  RESTRAINT  =        16.8922
+ EAMBER (non-restraint)  =    -43368.9824
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    10500   TIME(PS) =    2461.000  TEMP(K) =   302.11  PRESS =     0.0
+ Etot   =    -34071.5584  EKtot   =      9166.7207  EPtot      =    -43238.2791
+ BOND   =       394.8403  ANGLE   =      1108.5924  DIHED      =      1354.9093
+ 1-4 NB =       442.7449  1-4 EEL =      6294.8843  VDWAALS    =      4684.9580
+ EELEC  =    -57538.6977  EHBOND  =         0.0000  RESTRAINT  =        19.4894
+ EAMBER (non-restraint)  =    -43257.7685
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    11000   TIME(PS) =    2462.000  TEMP(K) =   302.64  PRESS =     0.0
+ Etot   =    -34138.8787  EKtot   =      9182.7930  EPtot      =    -43321.6717
+ BOND   =       369.5820  ANGLE   =      1014.3728  DIHED      =      1352.2549
+ 1-4 NB =       433.2436  1-4 EEL =      6272.5735  VDWAALS    =      4555.8024
+ EELEC  =    -57341.3681  EHBOND  =         0.0000  RESTRAINT  =        21.8673
+ EAMBER (non-restraint)  =    -43343.5389
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    11500   TIME(PS) =    2463.000  TEMP(K) =   300.84  PRESS =     0.0
+ Etot   =    -34297.4845  EKtot   =      9128.3164  EPtot      =    -43425.8009
+ BOND   =       348.4446  ANGLE   =      1044.2488  DIHED      =      1360.7740
+ 1-4 NB =       436.7400  1-4 EEL =      6330.3338  VDWAALS    =      4621.0233
+ EELEC  =    -57588.9422  EHBOND  =         0.0000  RESTRAINT  =        21.5767
+ EAMBER (non-restraint)  =    -43447.3777
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    12000   TIME(PS) =    2464.000  TEMP(K) =   299.94  PRESS =     0.0
+ Etot   =    -34224.0491  EKtot   =      9101.0498  EPtot      =    -43325.0989
+ BOND   =       362.4871  ANGLE   =      1087.7500  DIHED      =      1354.5406
+ 1-4 NB =       445.1992  1-4 EEL =      6314.5878  VDWAALS    =      4604.8306
+ EELEC  =    -57510.8794  EHBOND  =         0.0000  RESTRAINT  =        16.3851
+ EAMBER (non-restraint)  =    -43341.4840
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    12500   TIME(PS) =    2465.000  TEMP(K) =   301.15  PRESS =     0.0
+ Etot   =    -34267.9175  EKtot   =      9137.4805  EPtot      =    -43405.3979
+ BOND   =       382.4044  ANGLE   =      1077.4818  DIHED      =      1333.8542
+ 1-4 NB =       427.7791  1-4 EEL =      6303.5640  VDWAALS    =      4817.2653
+ EELEC  =    -57764.8424  EHBOND  =         0.0000  RESTRAINT  =        17.0957
+ EAMBER (non-restraint)  =    -43422.4937
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    13000   TIME(PS) =    2466.000  TEMP(K) =   299.55  PRESS =     0.0
+ Etot   =    -34194.4840  EKtot   =      9089.1426  EPtot      =    -43283.6265
+ BOND   =       341.8329  ANGLE   =      1070.3565  DIHED      =      1356.9438
+ 1-4 NB =       439.2913  1-4 EEL =      6325.4693  VDWAALS    =      4668.6885
+ EELEC  =    -57503.5164  EHBOND  =         0.0000  RESTRAINT  =        17.3074
+ EAMBER (non-restraint)  =    -43300.9340
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    13500   TIME(PS) =    2467.000  TEMP(K) =   301.99  PRESS =     0.0
+ Etot   =    -34162.9131  EKtot   =      9163.0508  EPtot      =    -43325.9639
+ BOND   =       333.7590  ANGLE   =      1037.3662  DIHED      =      1342.4120
+ 1-4 NB =       424.7371  1-4 EEL =      6283.6402  VDWAALS    =      4709.1136
+ EELEC  =    -57475.4873  EHBOND  =         0.0000  RESTRAINT  =        18.4954
+ EAMBER (non-restraint)  =    -43344.4593
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    14000   TIME(PS) =    2468.000  TEMP(K) =   297.72  PRESS =     0.0
+ Etot   =    -34343.1677  EKtot   =      9033.4092  EPtot      =    -43376.5769
+ BOND   =       347.6620  ANGLE   =      1032.2114  DIHED      =      1350.4731
+ 1-4 NB =       439.2839  1-4 EEL =      6321.2036  VDWAALS    =      4875.8089
+ EELEC  =    -57759.5836  EHBOND  =         0.0000  RESTRAINT  =        16.3638
+ EAMBER (non-restraint)  =    -43392.9407
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    14500   TIME(PS) =    2469.000  TEMP(K) =   301.49  PRESS =     0.0
+ Etot   =    -34227.8346  EKtot   =      9147.9805  EPtot      =    -43375.8150
+ BOND   =       374.0164  ANGLE   =      1074.7452  DIHED      =      1335.8563
+ 1-4 NB =       427.4038  1-4 EEL =      6284.3981  VDWAALS    =      4748.2986
+ EELEC  =    -57640.8392  EHBOND  =         0.0000  RESTRAINT  =        20.3058
+ EAMBER (non-restraint)  =    -43396.1208
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    15000   TIME(PS) =    2470.000  TEMP(K) =   297.60  PRESS =     0.0
+ Etot   =    -34277.6918  EKtot   =      9029.7852  EPtot      =    -43307.4769
+ BOND   =       350.1006  ANGLE   =      1095.0786  DIHED      =      1344.6568
+ 1-4 NB =       442.7623  1-4 EEL =      6295.4974  VDWAALS    =      4757.5676
+ EELEC  =    -57614.4498  EHBOND  =         0.0000  RESTRAINT  =        21.3095
+ EAMBER (non-restraint)  =    -43328.7865
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    15500   TIME(PS) =    2471.000  TEMP(K) =   299.05  PRESS =     0.0
+ Etot   =    -34288.9504  EKtot   =      9073.9961  EPtot      =    -43362.9465
+ BOND   =       345.3203  ANGLE   =      1003.7429  DIHED      =      1349.2429
+ 1-4 NB =       461.5940  1-4 EEL =      6333.1713  VDWAALS    =      4810.7647
+ EELEC  =    -57687.6934  EHBOND  =         0.0000  RESTRAINT  =        20.9108
+ EAMBER (non-restraint)  =    -43383.8572
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    16000   TIME(PS) =    2472.000  TEMP(K) =   302.47  PRESS =     0.0
+ Etot   =    -33876.6453  EKtot   =      9177.7578  EPtot      =    -43054.4031
+ BOND   =       381.6807  ANGLE   =      1053.1011  DIHED      =      1333.5473
+ 1-4 NB =       451.3371  1-4 EEL =      6318.2359  VDWAALS    =      4874.1540
+ EELEC  =    -57488.5301  EHBOND  =         0.0000  RESTRAINT  =        22.0709
+ EAMBER (non-restraint)  =    -43076.4740
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    16500   TIME(PS) =    2473.000  TEMP(K) =   300.06  PRESS =     0.0
+ Etot   =    -34275.4729  EKtot   =      9104.4805  EPtot      =    -43379.9534
+ BOND   =       364.9876  ANGLE   =      1058.7809  DIHED      =      1337.4554
+ 1-4 NB =       448.9626  1-4 EEL =      6318.2114  VDWAALS    =      4745.8740
+ EELEC  =    -57670.4152  EHBOND  =         0.0000  RESTRAINT  =        16.1898
+ EAMBER (non-restraint)  =    -43396.1432
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    17000   TIME(PS) =    2474.000  TEMP(K) =   304.73  PRESS =     0.0
+ Etot   =    -34074.6217  EKtot   =      9246.3730  EPtot      =    -43320.9948
+ BOND   =       343.9891  ANGLE   =      1080.6437  DIHED      =      1336.7247
+ 1-4 NB =       438.3874  1-4 EEL =      6300.5579  VDWAALS    =      4894.6086
+ EELEC  =    -57736.0850  EHBOND  =         0.0000  RESTRAINT  =        20.1789
+ EAMBER (non-restraint)  =    -43341.1737
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    17500   TIME(PS) =    2475.000  TEMP(K) =   302.59  PRESS =     0.0
+ Etot   =    -34336.3441  EKtot   =      9181.1650  EPtot      =    -43517.5091
+ BOND   =       367.2136  ANGLE   =      1085.1464  DIHED      =      1352.1192
+ 1-4 NB =       446.6845  1-4 EEL =      6277.3354  VDWAALS    =      4754.9104
+ EELEC  =    -57819.5218  EHBOND  =         0.0000  RESTRAINT  =        18.6031
+ EAMBER (non-restraint)  =    -43536.1122
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    18000   TIME(PS) =    2476.000  TEMP(K) =   300.31  PRESS =     0.0
+ Etot   =    -34257.9025  EKtot   =      9112.2803  EPtot      =    -43370.1828
+ BOND   =       375.4600  ANGLE   =      1042.8749  DIHED      =      1373.7638
+ 1-4 NB =       433.8156  1-4 EEL =      6311.0667  VDWAALS    =      4631.2783
+ EELEC  =    -57557.2951  EHBOND  =         0.0000  RESTRAINT  =        18.8530
+ EAMBER (non-restraint)  =    -43389.0358
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    18500   TIME(PS) =    2477.000  TEMP(K) =   299.21  PRESS =     0.0
+ Etot   =    -34450.7901  EKtot   =      9078.6445  EPtot      =    -43529.4346
+ BOND   =       344.5932  ANGLE   =      1048.0442  DIHED      =      1339.0533
+ 1-4 NB =       465.0873  1-4 EEL =      6279.8094  VDWAALS    =      4747.7092
+ EELEC  =    -57773.6328  EHBOND  =         0.0000  RESTRAINT  =        19.9016
+ EAMBER (non-restraint)  =    -43549.3363
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    19000   TIME(PS) =    2478.000  TEMP(K) =   299.36  PRESS =     0.0
+ Etot   =    -34302.3886  EKtot   =      9083.3135  EPtot      =    -43385.7020
+ BOND   =       343.6330  ANGLE   =      1112.5151  DIHED      =      1331.5194
+ 1-4 NB =       453.7741  1-4 EEL =      6332.5645  VDWAALS    =      4791.8529
+ EELEC  =    -57768.5033  EHBOND  =         0.0000  RESTRAINT  =        16.9423
+ EAMBER (non-restraint)  =    -43402.6443
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    19500   TIME(PS) =    2479.000  TEMP(K) =   301.52  PRESS =     0.0
+ Etot   =    -34173.3915  EKtot   =      9148.8525  EPtot      =    -43322.2440
+ BOND   =       347.7006  ANGLE   =      1066.5093  DIHED      =      1356.2640
+ 1-4 NB =       445.9389  1-4 EEL =      6312.7339  VDWAALS    =      4624.6689
+ EELEC  =    -57493.1669  EHBOND  =         0.0000  RESTRAINT  =        17.1073
+ EAMBER (non-restraint)  =    -43339.3514
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    20000   TIME(PS) =    2480.000  TEMP(K) =   297.76  PRESS =     0.0
+ Etot   =    -34307.9573  EKtot   =      9034.9023  EPtot      =    -43342.8596
+ BOND   =       359.9576  ANGLE   =      1068.8016  DIHED      =      1353.3675
+ 1-4 NB =       456.8324  1-4 EEL =      6305.3934  VDWAALS    =      4745.1088
+ EELEC  =    -57645.7780  EHBOND  =         0.0000  RESTRAINT  =        13.4570
+ EAMBER (non-restraint)  =    -43356.3167
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    20500   TIME(PS) =    2481.000  TEMP(K) =   301.03  PRESS =     0.0
+ Etot   =    -34208.2277  EKtot   =      9133.8887  EPtot      =    -43342.1164
+ BOND   =       394.9403  ANGLE   =      1033.3333  DIHED      =      1350.5536
+ 1-4 NB =       452.7096  1-4 EEL =      6278.5081  VDWAALS    =      4625.8007
+ EELEC  =    -57492.6255  EHBOND  =         0.0000  RESTRAINT  =        14.6635
+ EAMBER (non-restraint)  =    -43356.7799
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    21000   TIME(PS) =    2482.000  TEMP(K) =   296.34  PRESS =     0.0
+ Etot   =    -34380.7782  EKtot   =      8991.8223  EPtot      =    -43372.6005
+ BOND   =       363.3311  ANGLE   =      1042.4602  DIHED      =      1355.4814
+ 1-4 NB =       457.2700  1-4 EEL =      6290.8056  VDWAALS    =      4836.5998
+ EELEC  =    -57738.7235  EHBOND  =         0.0000  RESTRAINT  =        20.1749
+ EAMBER (non-restraint)  =    -43392.7754
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    21500   TIME(PS) =    2483.000  TEMP(K) =   300.05  PRESS =     0.0
+ Etot   =    -34243.8147  EKtot   =      9104.2568  EPtot      =    -43348.0715
+ BOND   =       361.6156  ANGLE   =      1095.5059  DIHED      =      1339.2508
+ 1-4 NB =       429.2903  1-4 EEL =      6300.6172  VDWAALS    =      4828.0822
+ EELEC  =    -57720.7110  EHBOND  =         0.0000  RESTRAINT  =        18.2774
+ EAMBER (non-restraint)  =    -43366.3490
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    22000   TIME(PS) =    2484.000  TEMP(K) =   300.02  PRESS =     0.0
+ Etot   =    -34262.9044  EKtot   =      9103.3818  EPtot      =    -43366.2863
+ BOND   =       343.8502  ANGLE   =      1029.6754  DIHED      =      1339.3196
+ 1-4 NB =       447.1453  1-4 EEL =      6316.8917  VDWAALS    =      4710.3850
+ EELEC  =    -57571.6376  EHBOND  =         0.0000  RESTRAINT  =        18.0841
+ EAMBER (non-restraint)  =    -43384.3703
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    22500   TIME(PS) =    2485.000  TEMP(K) =   304.00  PRESS =     0.0
+ Etot   =    -34084.5046  EKtot   =      9224.1836  EPtot      =    -43308.6882
+ BOND   =       342.5593  ANGLE   =      1042.5124  DIHED      =      1361.7915
+ 1-4 NB =       439.9309  1-4 EEL =      6329.5880  VDWAALS    =      4629.8620
+ EELEC  =    -57480.4193  EHBOND  =         0.0000  RESTRAINT  =        25.4868
+ EAMBER (non-restraint)  =    -43334.1751
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    23000   TIME(PS) =    2486.000  TEMP(K) =   294.89  PRESS =     0.0
+ Etot   =    -34399.3872  EKtot   =      8947.6494  EPtot      =    -43347.0367
+ BOND   =       336.2416  ANGLE   =      1083.0764  DIHED      =      1357.6474
+ 1-4 NB =       436.7497  1-4 EEL =      6306.1253  VDWAALS    =      4905.6928
+ EELEC  =    -57793.5995  EHBOND  =         0.0000  RESTRAINT  =        21.0296
+ EAMBER (non-restraint)  =    -43368.0663
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    23500   TIME(PS) =    2487.000  TEMP(K) =   300.22  PRESS =     0.0
+ Etot   =    -34275.3669  EKtot   =      9109.3896  EPtot      =    -43384.7565
+ BOND   =       361.7923  ANGLE   =      1081.6579  DIHED      =      1350.1906
+ 1-4 NB =       452.3831  1-4 EEL =      6329.4783  VDWAALS    =      4679.6699
+ EELEC  =    -57657.4342  EHBOND  =         0.0000  RESTRAINT  =        17.5056
+ EAMBER (non-restraint)  =    -43402.2621
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    24000   TIME(PS) =    2488.000  TEMP(K) =   300.31  PRESS =     0.0
+ Etot   =    -34289.5718  EKtot   =      9112.1855  EPtot      =    -43401.7573
+ BOND   =       335.5965  ANGLE   =      1081.6625  DIHED      =      1346.4339
+ 1-4 NB =       463.2938  1-4 EEL =      6290.2222  VDWAALS    =      4874.0863
+ EELEC  =    -57814.7659  EHBOND  =         0.0000  RESTRAINT  =        21.7132
+ EAMBER (non-restraint)  =    -43423.4706
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    24500   TIME(PS) =    2489.000  TEMP(K) =   297.22  PRESS =     0.0
+ Etot   =    -34564.3135  EKtot   =      9018.3086  EPtot      =    -43582.6221
+ BOND   =       377.7052  ANGLE   =      1016.6986  DIHED      =      1332.9444
+ 1-4 NB =       439.8129  1-4 EEL =      6319.1802  VDWAALS    =      4890.6915
+ EELEC  =    -57979.9054  EHBOND  =         0.0000  RESTRAINT  =        20.2505
+ EAMBER (non-restraint)  =    -43602.8727
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    25000   TIME(PS) =    2490.000  TEMP(K) =   296.33  PRESS =     0.0
+ Etot   =    -34533.9100  EKtot   =      8991.4717  EPtot      =    -43525.3816
+ BOND   =       336.0415  ANGLE   =      1050.1436  DIHED      =      1344.9907
+ 1-4 NB =       442.4230  1-4 EEL =      6285.9528  VDWAALS    =      4608.5815
+ EELEC  =    -57613.1657  EHBOND  =         0.0000  RESTRAINT  =        19.6509
+ EAMBER (non-restraint)  =    -43545.0326
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    25500   TIME(PS) =    2491.000  TEMP(K) =   302.21  PRESS =     0.0
+ Etot   =    -34167.4093  EKtot   =      9169.7881  EPtot      =    -43337.1974
+ BOND   =       346.1276  ANGLE   =      1112.8564  DIHED      =      1353.2655
+ 1-4 NB =       433.3009  1-4 EEL =      6276.3528  VDWAALS    =      4661.4217
+ EELEC  =    -57541.2642  EHBOND  =         0.0000  RESTRAINT  =        20.7419
+ EAMBER (non-restraint)  =    -43357.9393
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    26000   TIME(PS) =    2492.000  TEMP(K) =   301.18  PRESS =     0.0
+ Etot   =    -34089.9163  EKtot   =      9138.6348  EPtot      =    -43228.5510
+ BOND   =       346.4598  ANGLE   =      1009.9850  DIHED      =      1339.4997
+ 1-4 NB =       435.3921  1-4 EEL =      6285.7595  VDWAALS    =      4781.7811
+ EELEC  =    -57449.5134  EHBOND  =         0.0000  RESTRAINT  =        22.0851
+ EAMBER (non-restraint)  =    -43250.6362
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    26500   TIME(PS) =    2493.000  TEMP(K) =   305.60  PRESS =     0.0
+ Etot   =    -33972.1030  EKtot   =      9272.6475  EPtot      =    -43244.7504
+ BOND   =       366.8423  ANGLE   =      1050.1066  DIHED      =      1340.1445
+ 1-4 NB =       433.8280  1-4 EEL =      6272.4622  VDWAALS    =      4836.2010
+ EELEC  =    -57563.8676  EHBOND  =         0.0000  RESTRAINT  =        19.5324
+ EAMBER (non-restraint)  =    -43264.2828
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    27000   TIME(PS) =    2494.000  TEMP(K) =   298.24  PRESS =     0.0
+ Etot   =    -34285.3924  EKtot   =      9049.1758  EPtot      =    -43334.5681
+ BOND   =       333.5032  ANGLE   =      1021.7390  DIHED      =      1377.9127
+ 1-4 NB =       438.7966  1-4 EEL =      6327.1773  VDWAALS    =      4685.2062
+ EELEC  =    -57535.7368  EHBOND  =         0.0000  RESTRAINT  =        16.8337
+ EAMBER (non-restraint)  =    -43351.4019
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    27500   TIME(PS) =    2495.000  TEMP(K) =   302.12  PRESS =     0.0
+ Etot   =    -34144.0391  EKtot   =      9167.1387  EPtot      =    -43311.1777
+ BOND   =       334.1508  ANGLE   =      1069.5096  DIHED      =      1347.1790
+ 1-4 NB =       438.0532  1-4 EEL =      6286.8754  VDWAALS    =      4743.3120
+ EELEC  =    -57547.8112  EHBOND  =         0.0000  RESTRAINT  =        17.5535
+ EAMBER (non-restraint)  =    -43328.7313
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    28000   TIME(PS) =    2496.000  TEMP(K) =   298.74  PRESS =     0.0
+ Etot   =    -34341.3247  EKtot   =      9064.4531  EPtot      =    -43405.7778
+ BOND   =       347.2183  ANGLE   =      1061.0300  DIHED      =      1332.0320
+ 1-4 NB =       449.7547  1-4 EEL =      6291.7024  VDWAALS    =      4889.3917
+ EELEC  =    -57799.1258  EHBOND  =         0.0000  RESTRAINT  =        22.2188
+ EAMBER (non-restraint)  =    -43427.9967
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    28500   TIME(PS) =    2497.000  TEMP(K) =   297.82  PRESS =     0.0
+ Etot   =    -34403.7798  EKtot   =      9036.5713  EPtot      =    -43440.3511
+ BOND   =       359.6990  ANGLE   =      1057.6761  DIHED      =      1350.9351
+ 1-4 NB =       436.2256  1-4 EEL =      6279.6323  VDWAALS    =      4662.1700
+ EELEC  =    -57608.4307  EHBOND  =         0.0000  RESTRAINT  =        21.7416
+ EAMBER (non-restraint)  =    -43462.0927
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    29000   TIME(PS) =    2498.000  TEMP(K) =   305.53  PRESS =     0.0
+ Etot   =    -34136.2785  EKtot   =      9270.5723  EPtot      =    -43406.8508
+ BOND   =       367.6646  ANGLE   =      1115.4091  DIHED      =      1343.6999
+ 1-4 NB =       450.7275  1-4 EEL =      6276.0816  VDWAALS    =      4770.8894
+ EELEC  =    -57750.0850  EHBOND  =         0.0000  RESTRAINT  =        18.7622
+ EAMBER (non-restraint)  =    -43425.6130
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    29500   TIME(PS) =    2499.000  TEMP(K) =   302.57  PRESS =     0.0
+ Etot   =    -34195.2330  EKtot   =      9180.7832  EPtot      =    -43376.0162
+ BOND   =       357.7897  ANGLE   =      1053.6887  DIHED      =      1353.1858
+ 1-4 NB =       437.5302  1-4 EEL =      6338.8240  VDWAALS    =      4729.5733
+ EELEC  =    -57666.3484  EHBOND  =         0.0000  RESTRAINT  =        19.7406
+ EAMBER (non-restraint)  =    -43395.7568
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    30000   TIME(PS) =    2500.000  TEMP(K) =   298.29  PRESS =     0.0
+ Etot   =    -34342.5538  EKtot   =      9050.9492  EPtot      =    -43393.5031
+ BOND   =       352.2277  ANGLE   =      1072.3231  DIHED      =      1354.0500
+ 1-4 NB =       436.9656  1-4 EEL =      6260.6810  VDWAALS    =      4820.2897
+ EELEC  =    -57708.3765  EHBOND  =         0.0000  RESTRAINT  =        18.3364
+ EAMBER (non-restraint)  =    -43411.8394
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    30500   TIME(PS) =    2501.000  TEMP(K) =   297.67  PRESS =     0.0
+ Etot   =    -34293.7113  EKtot   =      9031.9072  EPtot      =    -43325.6185
+ BOND   =       368.3809  ANGLE   =      1087.8042  DIHED      =      1336.0314
+ 1-4 NB =       434.2792  1-4 EEL =      6287.8299  VDWAALS    =      4783.9071
+ EELEC  =    -57642.1316  EHBOND  =         0.0000  RESTRAINT  =        18.2804
+ EAMBER (non-restraint)  =    -43343.8989
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    31000   TIME(PS) =    2502.000  TEMP(K) =   301.20  PRESS =     0.0
+ Etot   =    -34418.7977  EKtot   =      9139.1025  EPtot      =    -43557.9003
+ BOND   =       373.8071  ANGLE   =      1004.7391  DIHED      =      1337.2043
+ 1-4 NB =       438.9571  1-4 EEL =      6283.3811  VDWAALS    =      4858.0873
+ EELEC  =    -57874.5377  EHBOND  =         0.0000  RESTRAINT  =        20.4613
+ EAMBER (non-restraint)  =    -43578.3616
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    31500   TIME(PS) =    2503.000  TEMP(K) =   296.46  PRESS =     0.0
+ Etot   =    -34460.8950  EKtot   =      8995.4150  EPtot      =    -43456.3100
+ BOND   =       349.4247  ANGLE   =      1064.2577  DIHED      =      1351.6323
+ 1-4 NB =       451.4387  1-4 EEL =      6309.1162  VDWAALS    =      4774.8096
+ EELEC  =    -57778.5954  EHBOND  =         0.0000  RESTRAINT  =        21.6061
+ EAMBER (non-restraint)  =    -43477.9161
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    32000   TIME(PS) =    2504.000  TEMP(K) =   303.06  PRESS =     0.0
+ Etot   =    -34154.5844  EKtot   =      9195.6787  EPtot      =    -43350.2631
+ BOND   =       383.7540  ANGLE   =      1051.7401  DIHED      =      1379.6779
+ 1-4 NB =       431.4325  1-4 EEL =      6317.7774  VDWAALS    =      4723.9530
+ EELEC  =    -57655.9620  EHBOND  =         0.0000  RESTRAINT  =        17.3639
+ EAMBER (non-restraint)  =    -43367.6270
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    32500   TIME(PS) =    2505.000  TEMP(K) =   302.93  PRESS =     0.0
+ Etot   =    -34028.6728  EKtot   =      9191.7314  EPtot      =    -43220.4042
+ BOND   =       347.6666  ANGLE   =      1036.5387  DIHED      =      1350.8776
+ 1-4 NB =       445.1552  1-4 EEL =      6305.9231  VDWAALS    =      4626.8029
+ EELEC  =    -57351.1353  EHBOND  =         0.0000  RESTRAINT  =        17.7670
+ EAMBER (non-restraint)  =    -43238.1712
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    33000   TIME(PS) =    2506.000  TEMP(K) =   301.11  PRESS =     0.0
+ Etot   =    -34251.4406  EKtot   =      9136.3398  EPtot      =    -43387.7804
+ BOND   =       341.5879  ANGLE   =      1073.4013  DIHED      =      1339.1457
+ 1-4 NB =       457.0683  1-4 EEL =      6333.8795  VDWAALS    =      4817.8064
+ EELEC  =    -57772.1085  EHBOND  =         0.0000  RESTRAINT  =        21.4391
+ EAMBER (non-restraint)  =    -43409.2195
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    33500   TIME(PS) =    2507.000  TEMP(K) =   302.91  PRESS =     0.0
+ Etot   =    -34269.1417  EKtot   =      9191.0215  EPtot      =    -43460.1632
+ BOND   =       381.3563  ANGLE   =      1038.9421  DIHED      =      1336.7882
+ 1-4 NB =       442.1830  1-4 EEL =      6318.8094  VDWAALS    =      4798.5795
+ EELEC  =    -57795.5471  EHBOND  =         0.0000  RESTRAINT  =        18.7253
+ EAMBER (non-restraint)  =    -43478.8886
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    34000   TIME(PS) =    2508.000  TEMP(K) =   300.24  PRESS =     0.0
+ Etot   =    -34243.2987  EKtot   =      9109.9795  EPtot      =    -43353.2782
+ BOND   =       376.8386  ANGLE   =      1035.8578  DIHED      =      1331.6566
+ 1-4 NB =       434.3986  1-4 EEL =      6274.4492  VDWAALS    =      4926.8067
+ EELEC  =    -57750.3514  EHBOND  =         0.0000  RESTRAINT  =        17.0656
+ EAMBER (non-restraint)  =    -43370.3438
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    34500   TIME(PS) =    2509.000  TEMP(K) =   299.26  PRESS =     0.0
+ Etot   =    -34157.6515  EKtot   =      9080.2256  EPtot      =    -43237.8771
+ BOND   =       361.1781  ANGLE   =      1070.3942  DIHED      =      1343.2182
+ 1-4 NB =       454.6748  1-4 EEL =      6315.5914  VDWAALS    =      4908.2917
+ EELEC  =    -57709.3002  EHBOND  =         0.0000  RESTRAINT  =        18.0747
+ EAMBER (non-restraint)  =    -43255.9518
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    35000   TIME(PS) =    2510.000  TEMP(K) =   304.13  PRESS =     0.0
+ Etot   =    -34114.8410  EKtot   =      9227.9121  EPtot      =    -43342.7531
+ BOND   =       357.0626  ANGLE   =      1080.1163  DIHED      =      1354.7374
+ 1-4 NB =       452.5632  1-4 EEL =      6322.6423  VDWAALS    =      4773.1325
+ EELEC  =    -57702.4024  EHBOND  =         0.0000  RESTRAINT  =        19.3950
+ EAMBER (non-restraint)  =    -43362.1481
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    35500   TIME(PS) =    2511.000  TEMP(K) =   297.66  PRESS =     0.0
+ Etot   =    -34484.3395  EKtot   =      9031.8047  EPtot      =    -43516.1442
+ BOND   =       372.5197  ANGLE   =      1039.9670  DIHED      =      1351.4079
+ 1-4 NB =       429.6132  1-4 EEL =      6292.0920  VDWAALS    =      4937.4173
+ EELEC  =    -57958.5942  EHBOND  =         0.0000  RESTRAINT  =        19.4329
+ EAMBER (non-restraint)  =    -43535.5771
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    36000   TIME(PS) =    2512.000  TEMP(K) =   298.96  PRESS =     0.0
+ Etot   =    -34375.4082  EKtot   =      9071.0410  EPtot      =    -43446.4493
+ BOND   =       351.1565  ANGLE   =      1010.0234  DIHED      =      1347.8914
+ 1-4 NB =       450.8755  1-4 EEL =      6326.6163  VDWAALS    =      4821.3264
+ EELEC  =    -57773.1246  EHBOND  =         0.0000  RESTRAINT  =        18.7859
+ EAMBER (non-restraint)  =    -43465.2351
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    36500   TIME(PS) =    2513.000  TEMP(K) =   298.37  PRESS =     0.0
+ Etot   =    -34455.8425  EKtot   =      9053.1309  EPtot      =    -43508.9733
+ BOND   =       369.2960  ANGLE   =      1067.2278  DIHED      =      1334.0633
+ 1-4 NB =       454.5771  1-4 EEL =      6303.2874  VDWAALS    =      4709.4542
+ EELEC  =    -57765.4255  EHBOND  =         0.0000  RESTRAINT  =        18.5464
+ EAMBER (non-restraint)  =    -43527.5197
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    37000   TIME(PS) =    2514.000  TEMP(K) =   299.32  PRESS =     0.0
+ Etot   =    -34139.3149  EKtot   =      9082.0039  EPtot      =    -43221.3188
+ BOND   =       352.1351  ANGLE   =      1096.1637  DIHED      =      1357.9390
+ 1-4 NB =       428.9986  1-4 EEL =      6272.2908  VDWAALS    =      4767.4632
+ EELEC  =    -57517.4916  EHBOND  =         0.0000  RESTRAINT  =        21.1824
+ EAMBER (non-restraint)  =    -43242.5012
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    37500   TIME(PS) =    2515.000  TEMP(K) =   297.37  PRESS =     0.0
+ Etot   =    -34429.6035  EKtot   =      9022.8643  EPtot      =    -43452.4678
+ BOND   =       358.8836  ANGLE   =      1071.0432  DIHED      =      1357.0912
+ 1-4 NB =       433.9345  1-4 EEL =      6280.4990  VDWAALS    =      4853.1429
+ EELEC  =    -57830.3872  EHBOND  =         0.0000  RESTRAINT  =        23.3250
+ EAMBER (non-restraint)  =    -43475.7928
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    38000   TIME(PS) =    2516.000  TEMP(K) =   298.09  PRESS =     0.0
+ Etot   =    -34372.2866  EKtot   =      9044.8555  EPtot      =    -43417.1421
+ BOND   =       310.4465  ANGLE   =      1041.4844  DIHED      =      1355.8717
+ 1-4 NB =       439.6964  1-4 EEL =      6313.6682  VDWAALS    =      4733.3700
+ EELEC  =    -57631.3554  EHBOND  =         0.0000  RESTRAINT  =        19.6762
+ EAMBER (non-restraint)  =    -43436.8183
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    38500   TIME(PS) =    2517.000  TEMP(K) =   300.65  PRESS =     0.0
+ Etot   =    -34322.6631  EKtot   =      9122.3486  EPtot      =    -43445.0117
+ BOND   =       378.2953  ANGLE   =      1046.6142  DIHED      =      1337.6016
+ 1-4 NB =       440.9862  1-4 EEL =      6286.9744  VDWAALS    =      4805.0811
+ EELEC  =    -57760.5630  EHBOND  =         0.0000  RESTRAINT  =        19.9985
+ EAMBER (non-restraint)  =    -43465.0102
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    39000   TIME(PS) =    2518.000  TEMP(K) =   299.23  PRESS =     0.0
+ Etot   =    -34299.5522  EKtot   =      9079.4023  EPtot      =    -43378.9545
+ BOND   =       323.2474  ANGLE   =      1062.8470  DIHED      =      1351.5629
+ 1-4 NB =       457.0410  1-4 EEL =      6320.0117  VDWAALS    =      4852.7727
+ EELEC  =    -57764.0518  EHBOND  =         0.0000  RESTRAINT  =        17.6145
+ EAMBER (non-restraint)  =    -43396.5690
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    39500   TIME(PS) =    2519.000  TEMP(K) =   304.54  PRESS =     0.0
+ Etot   =    -34099.4315  EKtot   =      9240.3916  EPtot      =    -43339.8231
+ BOND   =       349.2462  ANGLE   =      1064.2915  DIHED      =      1338.3251
+ 1-4 NB =       436.9603  1-4 EEL =      6278.6874  VDWAALS    =      4875.5295
+ EELEC  =    -57702.5877  EHBOND  =         0.0000  RESTRAINT  =        19.7246
+ EAMBER (non-restraint)  =    -43359.5477
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    40000   TIME(PS) =    2520.000  TEMP(K) =   298.31  PRESS =     0.0
+ Etot   =    -34441.0056  EKtot   =      9051.3213  EPtot      =    -43492.3269
+ BOND   =       371.0595  ANGLE   =      1063.4965  DIHED      =      1338.8728
+ 1-4 NB =       439.5444  1-4 EEL =      6301.2139  VDWAALS    =      4800.5157
+ EELEC  =    -57823.0587  EHBOND  =         0.0000  RESTRAINT  =        16.0290
+ EAMBER (non-restraint)  =    -43508.3560
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    40500   TIME(PS) =    2521.000  TEMP(K) =   302.58  PRESS =     0.0
+ Etot   =    -34295.9283  EKtot   =      9181.1133  EPtot      =    -43477.0416
+ BOND   =       374.6868  ANGLE   =      1087.2898  DIHED      =      1346.3283
+ 1-4 NB =       443.0841  1-4 EEL =      6281.4441  VDWAALS    =      4891.5746
+ EELEC  =    -57917.6414  EHBOND  =         0.0000  RESTRAINT  =        16.1922
+ EAMBER (non-restraint)  =    -43493.2337
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    41000   TIME(PS) =    2522.000  TEMP(K) =   298.34  PRESS =     0.0
+ Etot   =    -34371.0361  EKtot   =      9052.2100  EPtot      =    -43423.2460
+ BOND   =       369.6663  ANGLE   =      1025.9474  DIHED      =      1342.6853
+ 1-4 NB =       445.8220  1-4 EEL =      6302.4564  VDWAALS    =      4804.4800
+ EELEC  =    -57729.8262  EHBOND  =         0.0000  RESTRAINT  =        15.5227
+ EAMBER (non-restraint)  =    -43438.7687
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    41500   TIME(PS) =    2523.000  TEMP(K) =   296.72  PRESS =     0.0
+ Etot   =    -34443.9478  EKtot   =      9003.0615  EPtot      =    -43447.0093
+ BOND   =       360.5131  ANGLE   =      1097.9825  DIHED      =      1351.1779
+ 1-4 NB =       442.8377  1-4 EEL =      6304.7602  VDWAALS    =      4882.5421
+ EELEC  =    -57903.7924  EHBOND  =         0.0000  RESTRAINT  =        16.9696
+ EAMBER (non-restraint)  =    -43463.9789
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    42000   TIME(PS) =    2524.000  TEMP(K) =   299.65  PRESS =     0.0
+ Etot   =    -34201.5512  EKtot   =      9092.0654  EPtot      =    -43293.6167
+ BOND   =       357.6497  ANGLE   =      1082.1652  DIHED      =      1379.5124
+ 1-4 NB =       436.4891  1-4 EEL =      6313.0361  VDWAALS    =      4790.7397
+ EELEC  =    -57671.5268  EHBOND  =         0.0000  RESTRAINT  =        18.3179
+ EAMBER (non-restraint)  =    -43311.9345
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    42500   TIME(PS) =    2525.000  TEMP(K) =   300.47  PRESS =     0.0
+ Etot   =    -34419.8901  EKtot   =      9116.9453  EPtot      =    -43536.8354
+ BOND   =       355.3291  ANGLE   =      1050.0538  DIHED      =      1362.4812
+ 1-4 NB =       446.6263  1-4 EEL =      6324.3876  VDWAALS    =      4862.6776
+ EELEC  =    -57957.5742  EHBOND  =         0.0000  RESTRAINT  =        19.1832
+ EAMBER (non-restraint)  =    -43556.0186
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    43000   TIME(PS) =    2526.000  TEMP(K) =   299.64  PRESS =     0.0
+ Etot   =    -34200.4337  EKtot   =      9091.7666  EPtot      =    -43292.2003
+ BOND   =       371.5368  ANGLE   =      1078.1429  DIHED      =      1370.8319
+ 1-4 NB =       442.8084  1-4 EEL =      6345.6428  VDWAALS    =      4796.9690
+ EELEC  =    -57715.9949  EHBOND  =         0.0000  RESTRAINT  =        17.8628
+ EAMBER (non-restraint)  =    -43310.0631
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    43500   TIME(PS) =    2527.000  TEMP(K) =   300.50  PRESS =     0.0
+ Etot   =    -34294.3174  EKtot   =      9117.7568  EPtot      =    -43412.0742
+ BOND   =       359.0927  ANGLE   =      1065.5957  DIHED      =      1358.5537
+ 1-4 NB =       448.6033  1-4 EEL =      6311.3899  VDWAALS    =      4792.5149
+ EELEC  =    -57765.9063  EHBOND  =         0.0000  RESTRAINT  =        18.0820
+ EAMBER (non-restraint)  =    -43430.1562
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    44000   TIME(PS) =    2528.000  TEMP(K) =   295.84  PRESS =     0.0
+ Etot   =    -34531.7526  EKtot   =      8976.5918  EPtot      =    -43508.3443
+ BOND   =       361.1704  ANGLE   =      1074.0488  DIHED      =      1337.0255
+ 1-4 NB =       444.7010  1-4 EEL =      6315.6943  VDWAALS    =      4752.0745
+ EELEC  =    -57813.8556  EHBOND  =         0.0000  RESTRAINT  =        20.7968
+ EAMBER (non-restraint)  =    -43529.1412
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    44500   TIME(PS) =    2529.000  TEMP(K) =   295.69  PRESS =     0.0
+ Etot   =    -34465.9770  EKtot   =      8971.9951  EPtot      =    -43437.9721
+ BOND   =       338.1208  ANGLE   =      1065.9449  DIHED      =      1353.9773
+ 1-4 NB =       446.7705  1-4 EEL =      6293.0395  VDWAALS    =      4746.0327
+ EELEC  =    -57699.5755  EHBOND  =         0.0000  RESTRAINT  =        17.7177
+ EAMBER (non-restraint)  =    -43455.6899
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    45000   TIME(PS) =    2530.000  TEMP(K) =   299.09  PRESS =     0.0
+ Etot   =    -34268.4318  EKtot   =      9074.9980  EPtot      =    -43343.4298
+ BOND   =       365.1803  ANGLE   =      1071.0800  DIHED      =      1344.0828
+ 1-4 NB =       439.5672  1-4 EEL =      6278.8960  VDWAALS    =      4868.4675
+ EELEC  =    -57730.6373  EHBOND  =         0.0000  RESTRAINT  =        19.9336
+ EAMBER (non-restraint)  =    -43363.3634
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    45500   TIME(PS) =    2531.000  TEMP(K) =   304.86  PRESS =     0.0
+ Etot   =    -34058.2650  EKtot   =      9250.1045  EPtot      =    -43308.3695
+ BOND   =       357.2879  ANGLE   =      1028.7627  DIHED      =      1328.1480
+ 1-4 NB =       452.2646  1-4 EEL =      6301.1460  VDWAALS    =      4643.9432
+ EELEC  =    -57438.6113  EHBOND  =         0.0000  RESTRAINT  =        18.6893
+ EAMBER (non-restraint)  =    -43327.0588
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    46000   TIME(PS) =    2532.000  TEMP(K) =   300.78  PRESS =     0.0
+ Etot   =    -34332.7953  EKtot   =      9126.3057  EPtot      =    -43459.1009
+ BOND   =       374.0236  ANGLE   =      1063.1513  DIHED      =      1330.5692
+ 1-4 NB =       451.1450  1-4 EEL =      6315.8021  VDWAALS    =      4897.2916
+ EELEC  =    -57910.7597  EHBOND  =         0.0000  RESTRAINT  =        19.6760
+ EAMBER (non-restraint)  =    -43478.7769
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    46500   TIME(PS) =    2533.000  TEMP(K) =   299.36  PRESS =     0.0
+ Etot   =    -34154.9462  EKtot   =      9083.2646  EPtot      =    -43238.2108
+ BOND   =       363.8746  ANGLE   =      1037.3722  DIHED      =      1330.5586
+ 1-4 NB =       451.6734  1-4 EEL =      6303.1962  VDWAALS    =      4774.2348
+ EELEC  =    -57516.4159  EHBOND  =         0.0000  RESTRAINT  =        17.2953
+ EAMBER (non-restraint)  =    -43255.5062
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    47000   TIME(PS) =    2534.000  TEMP(K) =   301.68  PRESS =     0.0
+ Etot   =    -34229.4263  EKtot   =      9153.7354  EPtot      =    -43383.1616
+ BOND   =       363.9776  ANGLE   =      1053.1025  DIHED      =      1325.3423
+ 1-4 NB =       444.2067  1-4 EEL =      6251.7999  VDWAALS    =      4622.0265
+ EELEC  =    -57465.5717  EHBOND  =         0.0000  RESTRAINT  =        21.9548
+ EAMBER (non-restraint)  =    -43405.1164
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    47500   TIME(PS) =    2535.000  TEMP(K) =   300.03  PRESS =     0.0
+ Etot   =    -34333.1099  EKtot   =      9103.5107  EPtot      =    -43436.6207
+ BOND   =       349.2777  ANGLE   =      1036.2283  DIHED      =      1345.6453
+ 1-4 NB =       453.8078  1-4 EEL =      6308.0368  VDWAALS    =      4646.5396
+ EELEC  =    -57597.0587  EHBOND  =         0.0000  RESTRAINT  =        20.9025
+ EAMBER (non-restraint)  =    -43457.5232
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    48000   TIME(PS) =    2536.000  TEMP(K) =   298.32  PRESS =     0.0
+ Etot   =    -34281.3332  EKtot   =      9051.7744  EPtot      =    -43333.1076
+ BOND   =       377.4842  ANGLE   =      1060.4815  DIHED      =      1347.5568
+ 1-4 NB =       446.9916  1-4 EEL =      6288.3124  VDWAALS    =      4812.8645
+ EELEC  =    -57687.1621  EHBOND  =         0.0000  RESTRAINT  =        20.3635
+ EAMBER (non-restraint)  =    -43353.4711
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    48500   TIME(PS) =    2537.000  TEMP(K) =   302.32  PRESS =     0.0
+ Etot   =    -34027.2066  EKtot   =      9173.2070  EPtot      =    -43200.4136
+ BOND   =       381.0120  ANGLE   =      1112.2201  DIHED      =      1333.4612
+ 1-4 NB =       452.4320  1-4 EEL =      6268.2935  VDWAALS    =      4802.9081
+ EELEC  =    -57572.4651  EHBOND  =         0.0000  RESTRAINT  =        21.7247
+ EAMBER (non-restraint)  =    -43222.1383
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    49000   TIME(PS) =    2538.000  TEMP(K) =   297.06  PRESS =     0.0
+ Etot   =    -34326.5835  EKtot   =      9013.5039  EPtot      =    -43340.0875
+ BOND   =       374.6571  ANGLE   =      1051.8710  DIHED      =      1352.1592
+ 1-4 NB =       437.8514  1-4 EEL =      6282.4637  VDWAALS    =      4649.3731
+ EELEC  =    -57511.8546  EHBOND  =         0.0000  RESTRAINT  =        23.3917
+ EAMBER (non-restraint)  =    -43363.4791
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    49500   TIME(PS) =    2539.000  TEMP(K) =   299.37  PRESS =     0.0
+ Etot   =    -34427.1950  EKtot   =      9083.5781  EPtot      =    -43510.7731
+ BOND   =       343.7975  ANGLE   =      1065.2321  DIHED      =      1353.4250
+ 1-4 NB =       443.1941  1-4 EEL =      6289.1457  VDWAALS    =      4837.8470
+ EELEC  =    -57863.3257  EHBOND  =         0.0000  RESTRAINT  =        19.9111
+ EAMBER (non-restraint)  =    -43530.6841
+ ------------------------------------------------------------------------------
+
+wrapping first mol.:       20.26984       28.66588       49.65075
+wrapping first mol.:       20.26984       28.66588       49.65075
+
+ NSTEP =    50000   TIME(PS) =    2540.000  TEMP(K) =   303.74  PRESS =     0.0
+ Etot   =    -34172.8569  EKtot   =      9216.2412  EPtot      =    -43389.0981
+ BOND   =       340.6345  ANGLE   =      1055.1188  DIHED      =      1368.0128
+ 1-4 NB =       446.0766  1-4 EEL =      6284.9390  VDWAALS    =      4826.9262
+ EELEC  =    -57730.0069  EHBOND  =         0.0000  RESTRAINT  =        19.2007
+ EAMBER (non-restraint)  =    -43408.2989
+ ------------------------------------------------------------------------------
+
+
+      A V E R A G E S   O V E R     100 S T E P S
+
+
+ NSTEP =    50000   TIME(PS) =    2540.000  TEMP(K) =   299.97  PRESS =     0.0
+ Etot   =    -34272.4607  EKtot   =      9101.8601  EPtot      =    -43374.3209
+ BOND   =       356.7546  ANGLE   =      1058.9249  DIHED      =      1347.4027
+ 1-4 NB =       442.5308  1-4 EEL =      6299.5260  VDWAALS    =      4765.9602
+ EELEC  =    -57663.9389  EHBOND  =         0.0000  RESTRAINT  =        18.5187
+ EAMBER (non-restraint)  =    -43392.8396
+ ------------------------------------------------------------------------------
+
+
+      R M S  F L U C T U A T I O N S
+
+
+ NSTEP =    50000   TIME(PS) =    2540.000  TEMP(K) =     2.37  PRESS =     0.0
+ Etot   =       134.2038  EKtot   =        71.9934  EPtot      =        95.8246
+ BOND   =        17.0121  ANGLE   =        27.1865  DIHED      =        11.1741
+ 1-4 NB =         8.6867  1-4 EEL =        19.8941  VDWAALS    =        91.7289
+ EELEC  =       145.0351  EHBOND  =         0.0000  RESTRAINT  =         2.4871
+ EAMBER (non-restraint)  =        93.3375
+ ------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+   5.  TIMINGS
+--------------------------------------------------------------------------------
+
+|  NonSetup CPU Time in Major Routines:
+|
+|     Routine           Sec        %
+|     ------------------------------
+|     Nonbond          12.21   32.82
+|     Bond              0.00    0.00
+|     Angle             0.00    0.00
+|     Dihedral          0.00    0.00
+|     Shake             0.84    2.27
+|     RunMD            24.06   64.65
+|     Other             0.10    0.27
+|     ------------------------------
+|     Total            37.21
+
+|  PME Nonbond Pairlist CPU Time:
+|
+|     Routine              Sec        %
+|     ---------------------------------
+|     Set Up Cit           0.00    0.00
+|     Build List           0.00    0.00
+|     ---------------------------------
+|     Total                0.00    0.00
+
+|  PME Direct Force CPU Time:
+|
+|     Routine              Sec        %
+|     ---------------------------------
+|     NonBonded Calc       0.00    0.00
+|     Exclude Masked       0.00    0.00
+|     Other                0.04    0.12
+|     ---------------------------------
+|     Total                0.04    0.12
+
+|  PME Reciprocal Force CPU Time:
+|
+|     Routine              Sec        %
+|     ---------------------------------
+|     1D bspline           0.00    0.00
+|     Grid Charges         0.00    0.00
+|     Scalar Sum           0.00    0.00
+|     Gradient Sum         0.00    0.00
+|     FFT                  0.00    0.00
+|     ---------------------------------
+|     Total                0.00    0.00
+
+|  Final Performance Info:
+|     -----------------------------------------------------
+|     Average timings for last   49500 steps:
+|     Elapsed(s) =      36.83 Per Step(ms) =       0.74
+|         ns/day =     232.22   seconds/ns =     372.06
+|
+|     Average timings for all steps:
+|     Elapsed(s) =      37.23 Per Step(ms) =       0.74
+|         ns/day =     232.06   seconds/ns =     372.31
+|     -----------------------------------------------------
+
+|  Setup CPU time:            1.60 seconds
+|  NonSetup CPU time:        37.21 seconds
+|  Total CPU time:           38.81 seconds     0.01 hours
+
+|  Setup wall time:           1    seconds
+|  NonSetup wall time:       38    seconds
+|  Total wall time:          39    seconds     0.01 hours
