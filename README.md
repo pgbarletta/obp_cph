@@ -69,9 +69,9 @@ cphstats -i ~/labo/17/cph_obp/top_files/incph_apo reordered_cpouts.pH_75 -o 75_p
 
 ##### 2 Residuos protonables:
 
-GL4 4                                   
-GL4 5                                     
-LYS 7                                     
+GL4 4
+GL4 5
+LYS 7
 HIP 11 
 GL4 13 
 LYS 18 
