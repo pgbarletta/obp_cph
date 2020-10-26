@@ -1,0 +1,40 @@
+#PBS -S /bin/bash
+#PBS -N ctv_e1_cph_45
+#PBS -e 45ctv_e1_cph.err
+#PBS -o 45ctv_e1_cph.out
+#PBS -j oe
+#PBS -m abe
+#PBS -M pbarletta@gmail.com
+#PBS -l nodes=1:ppn=1:xk
+#PBS -l walltime=7:00:00
+
+#module load cuda/7.5
+# -n the total number processors
+
+# -N the number of proccesors per node
+
+#export EXE=/projects/sciteam/jn6/GIT/amber-gnu/bin/pmemd.cuda
+
+cd $PBS_O_WORKDIR
+source /opt/modules/default/init/bash
+module swap PrgEnv-cray PrgEnv-gnu
+module load cray-netcdf
+module load cray-parallel-netcdf
+module load bwpy
+module load cudatoolkit
+export pmemd_cuda=/projects/sciteam/gk4/amber-gnu/bin/pmemd.cuda
+
+i=45
+prmtop=/u/sciteam/barletta/scratch/pbarletta/cph_obp/top_files/ctv.prmtop
+mdin=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"equ.in
+mdout=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"equ.out
+inpcrd=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/e/30ectv.rst7
+restrt=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"e1_ctv.rst7
+mdcrd=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"e1_ctv.nc
+
+cpin=/u/sciteam/barletta/scratch/pbarletta/cph_obp/top_files/incph_ctv
+cprst=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"cprst_e1_ctv
+cpout=/u/sciteam/barletta/scratch/pbarletta/cph_obp/run/ctv/mhe/1e/"$i"ph/"$i"cpout_e1_ctv
+
+
+aprun -n 1 -N 1 $pmemd_cuda -O -i $mdin -o $mdout -p $prmtop -c $inpcrd -r $restrt -x $mdcrd -cpin $cpin -cprestrt $cprst -cpout $cpout -inf 45_mdinfo
