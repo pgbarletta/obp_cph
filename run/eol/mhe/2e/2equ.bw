@@ -1,0 +1,29 @@
+#PBS -S /bin/bash
+#PBS -N eol_e2_cph_
+#PBS -e eol_e2_cph.err
+#PBS -o eol_e2_cph.out
+#PBS -j oe
+#PBS -m abe
+#PBS -M pbarletta@gmail.com
+#PBS -l nodes=10:ppn=1:xk
+#PBS -l walltime=7:00:00
+
+#module load cuda/7.5
+# -n the total number processors
+
+# -N the number of proccesors per node
+
+#export EXE=/projects/sciteam/jn6/GIT/amber-gnu/bin/pmemd.cuda
+
+cd $PBS_O_WORKDIR
+source /opt/modules/default/init/bash
+module swap PrgEnv-cray PrgEnv-gnu
+module load cray-netcdf
+module load cray-parallel-netcdf
+module load bwpy
+module load cudatoolkit
+export pmemd_cuda_mpi=/projects/sciteam/gk4/amber-gnu/bin/pmemd.cuda.MPI
+export pmemd_cuda_mpi=/u/sciteam/cruzeiro/amber18/bin/pmemd.cuda.MPI
+
+
+aprun -n 10 -N 1 $pmemd_cuda_mpi -ng 10 -groupfile 2equ_groupfile -rem 4 
