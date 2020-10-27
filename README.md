@@ -214,6 +214,7 @@ $ mv t35p7_apo.nc 35p7_apo.nc
 
 #### 10
 
+30ph/
 35ph/
 40ph/
 45ph/
