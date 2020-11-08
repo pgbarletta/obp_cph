@@ -225,3 +225,9 @@ $ mv t35p7_apo.nc 35p7_apo.nc
 70ph/
 75ph/
 
+# Rehago todo
+
+ - 1e/ 2e/ y pre_pdt/ ya no valen más
+ - Tengo un bajón de Epotencial en la equilibración pq hice el calentamiento a V=cte y luego saqué los restraints
+    a vol constante también. Finalmente pasé a Pr=cte p/ la equilibración y ahí se acomodó la caja (achicó, aumentó densidad)
+    No creo q sea pbma.
