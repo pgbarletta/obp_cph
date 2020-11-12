@@ -14,12 +14,12 @@ do
 
     cd ${PH}
     
-    mv 30pdt.in.${PH} ${PH}pdt.in
-    mv cpout.${PH} ${PH}cpout_p1_${pdb1}
-    mv cprestrt.${PH} ${PH}cprst_p1_${pdb1}.rst7
-    mv mdcrd.${PH}.nc ${PH}p1_${pdb1}.nc
-    mv mdout.${PH} ${PH}pdt1.out
-    mv rst.rst7 ${PH}p1_${pdb1}.rst7
+#    mv 30pdt.in.${PH} ${PH}pdt.in
+#    mv cpout.${PH} ${PH}cpout_p1_${pdb1}
+#    mv cprestrt.${PH} ${PH}cprst_p1_${pdb1}.rst7
+#    mv mdcrd.${PH}.nc ${PH}p1_${pdb1}.nc
+#    mv mdout.${PH} ${PH}pdt1.out
+#    mv rst.rst7 ${PH}p1_${pdb1}.rst7
     cpptraj < strip_cpp
     cd ..
 done
