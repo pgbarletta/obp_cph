@@ -11,30 +11,28 @@ do
     phh=$(echo $i | cut -d ";" -f 2)
     
     # PCA por idx
-    mkdir ${k}
+#    mkdir ${k}
+#    
+#    sed s/30/${ph}/g plantillas/${cpp_rmsf} > ${k}/${cpp_rmsf}
+#    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_rmsf}
+#    sed -i s/apo/${pdb}/g ${k}/${cpp_rmsf}
+#    sed -i "s/\/1\//\/${k}\//g" ${k}/${cpp_rmsf}
+#
+#    cd ${k}
+#    cpptraj < ${cpp_pca}
+#    cpptraj < ${cpp_fit}
+#    cpptraj < ${cpp_rmsf}
+#    cd ..
+
+    # RMSF por pH
+    mkdir ${phh}
+
+    sed s/30/${phh}/g plantillas/${cpp_rmsf} > ${phh}/${cpp_rmsf}
+    sed -i s/apo_1/${pdb}_${phh}/g ${phh}/${cpp_rmsf}
+    sed -i s/apo/${pdb}/g ${phh}/${cpp_rmsf}
+    sed -i "s/\/1\//\/${phh}\//g" ${phh}/${cpp_rmsf}
     
-    sed s/30/${ph}/g plantillas/${cpp_rmsf} > ${k}/${cpp_rmsf}
-    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_rmsf}
-    sed -i s/apo/${pdb}/g ${k}/${cpp_rmsf}
-    sed -i "s/\/1\//\/${k}\//g" ${k}/${cpp_rmsf}
-
-    cd ${k}
-    cpptraj < ${cpp_pca}
-    cpptraj < ${cpp_fit}
-    cpptraj < ${cpp_rmsf}
-    cd ..
-
-    # PCA por pH
-    mkdir ${ph}ph
-
-    sed s/30/${ph}/g plantillas/${cpp_rmsf} > ${ph}ph/${cpp_rmsf}
-    sed -i s/apo_1/${pdb}_${ph}/g ${ph}ph/${cpp_rmsf}
-    sed -i s/apo/${pdb}/g ${ph}ph/${cpp_rmsf}
-    sed -i "s/\/1\//\/${ph}ph\//g" ${ph}ph/${cpp_rmsf}
-    
-    cd ${ph}ph
-    cpptraj < ${cpp_pca}
-    cpptraj < ${cpp_fit}
+    cd ${phh}
     cpptraj < ${cpp_rmsf}
     cd ..
 done
