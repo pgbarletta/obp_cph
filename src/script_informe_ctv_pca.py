@@ -2,7 +2,7 @@
 # `nb_templater` generated Python script
 # Generated from .ipynb template: ctv_pca.ipynb
 # www.github.com/ismailuddin/jupyter-nb-templater/
-# Generated on: 2020-10-13 10:50 
+# Generated on: 2020-11-10 15:37 
 
 import nbformat as nbf 
 import sys
@@ -19,19 +19,17 @@ cell_1=r"""
 dir_ctv_pca = string("/home/pbarletta/labo/20/cph_obp/run/ctv/pca/")
 dir_rtdos = string("/home/pbarletta/labo/20/cph_obp/rtdos_log")
 
-nstlim = 19500
 aa = 113
-phs = collect(30:5:75)
-idx = collect(1:10)
-pdt_steps = collect(0:1:7)
-titrable_cnt = 36
-titrable_resis = [4, 5, 7, 11, 13, 18, 20, 24, 27, 30, 33, 37, 39,
-    40, 41, 42, 48, 52, 58, 59, 64, 69, 73, 77, 78, 82, 87, 93, 94,
-    97, 99, 102, 109, 111, 114, 117];
-titrable_resnames = ["GL4", "GL4", "LYS", "HIP", "GL4", "LYS", "GL4", "AS4", "LYS",
-    "AS4", "GL4", "AS4", "GL4", "AS4", "LYS", "LYS", "GL4", "LYS",
-    "AS4", "LYS", "LYS", "LYS", "GL4", "AS4", "GL4", "LYS", "AS4",
-    "GL4", "GL4", "HIP", "LYS", "LYS", "LYS", "LYS", "LYS", "AS4"];
+nstlim = 12000
+phs = collect(2.0:.5:7.5)
+idx = collect(1:12)
+
+titrable_resis = [4, 5, 11, 13, 20, 24, 30, 33, 37, 39, 40,
+    48, 58, 73, 77, 78, 87, 93, 94, 97, 117]
+titrable_resnames = ["GL4", "GL4", "HIP", "GL4", "GL4", "AS4",
+    "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4",
+    "GL4", "AS4", "GL4", "GL4", "HIP", "AS4"]
+titrable_cnt = length(titrable_resis)
 """.strip()
 
 cell_2=r"""
@@ -82,18 +80,18 @@ end
 
 cell_3=r"""
 # Esto lo hago una sola vez. Luego leo el rtdo.
-for i in 1:10
+for i in 1:12
     println("---- ", idx[i], " , ", phs[i], "---- ")
-    dif_idx = diff_trj_avg(joinpath(dir_ctv_pca, string(idx[i]), string("avg_ctv_", idx[i], ".pdb")),
-        joinpath(dir_ctv_pca, string(idx[i]), string("full_avgfit_ctv_", idx[i], ".nc")),
-        collect(3:115))
+#     dif_idx = diff_trj_avg(joinpath(dir_ctv_pca, string(idx[i]), string("avg_ctv_", idx[i], ".pdb")),
+#         joinpath(dir_ctv_pca, string(idx[i]), string("full_avgfit_ctv_", idx[i], ".nc")),
+#         collect(3:115))
 
-    fid_idx = h5open(joinpath(dir_rtdos, string("diff_ctv_", idx[i], ".h5")), "w")
-    write(fid_idx, "dif", dif_idx)
-    close(fid_idx)
+#     fid_idx = h5open(joinpath(dir_rtdos, string("diff_ctv_", idx[i], ".h5")), "w")
+#     write(fid_idx, "dif", dif_idx)
+#     close(fid_idx)
     
-    dif_phs = diff_trj_avg(joinpath(dir_ctv_pca, string(phs[i], "ph"), string("avg_ctv_", phs[i], ".pdb")),
-        joinpath(dir_ctv_pca, string(phs[i], "ph"), string("full_avgfit_ctv_", phs[i], ".nc")),
+    dif_phs = diff_trj_avg(joinpath(dir_ctv_pca, string(phs[i]), string("avg_ctv_", phs[i], ".pdb")),
+        joinpath(dir_ctv_pca, string(phs[i]), string("full_avgfit_ctv_", phs[i], ".nc")),
         collect(3:115))
 
     fid_phs = h5open(joinpath(dir_rtdos, string("diff_ctv_", phs[i], ".h5")), "w")
@@ -103,34 +101,35 @@ end
 """.strip()
 
 cell_4=r"""
-for i in 1:10
+for i in 1:12
+    PH = convert(Int64, phs[i] * 10)
     # Leo modos
-    modes_idx, evals_idx = JUMD.readPtrajModes(
-        joinpath(dir_ctv_pca, string(idx[i]), string("modes_ctv_", idx[i])))
+#     modes_idx, evals_idx = JUMD.readPtrajModes(
+#         joinpath(dir_ctv_pca, string(idx[i]), string("modes_ctv_", idx[i])))
     modes_phs, evals_phs = JUMD.readPtrajModes(
-        joinpath(dir_ctv_pca, string(phs[i], "ph"), string("modes_ctv_", phs[i])))
+        joinpath(dir_ctv_pca, string(phs[i]), string("modes_ctv_", phs[i])))
 
     # Leo vectores diferencia entre el avg y los frames
-    dif_idx = h5read(joinpath(dir_rtdos, string("diff_ctv_", idx[i], ".h5")), "dif")
-    norm_dif_idx = mapslices(x -> x ./ norm(x), dif_idx, dims = 1)
+#     dif_idx = h5read(joinpath(dir_rtdos, string("diff_ctv_", idx[i], ".h5")), "dif")
+#     norm_dif_idx = mapslices(x -> x ./ norm(x), dif_idx, dims = 1)
     
     dif_phs = h5read(joinpath(dir_rtdos, string("diff_ctv_", phs[i], ".h5")), "dif")
     norm_dif_phs = mapslices(x -> x ./ norm(x), dif_phs, dims = 1)
     
-    nframes = size(dif_idx)[2]
+    nframes = size(dif_phs)[2]
 
     # Hago las proyecciones
-    prj_1_idx = Array{Float64, 1}(undef, nframes)
-    prj_2_idx = Array{Float64, 1}(undef, nframes)
-    prj_3_idx = Array{Float64, 1}(undef, nframes)
+#     prj_1_idx = Array{Float64, 1}(undef, nframes)
+#     prj_2_idx = Array{Float64, 1}(undef, nframes)
+#     prj_3_idx = Array{Float64, 1}(undef, nframes)
     prj_1_phs = Array{Float64, 1}(undef, nframes)
     prj_2_phs = Array{Float64, 1}(undef, nframes)
     prj_3_phs = Array{Float64, 1}(undef, nframes)
     
     for i = 1:nframes
-        prj_1_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 1])
-        prj_2_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 2])
-        prj_3_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 3])
+#         prj_1_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 1])
+#         prj_2_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 2])
+#         prj_3_idx[i] = dot(norm_dif_idx[:, i], modes_idx[:, 3])
         
         prj_1_phs[i] = dot(norm_dif_phs[:, i], modes_phs[:, 1])
         prj_2_phs[i] = dot(norm_dif_phs[:, i], modes_phs[:, 2])
@@ -138,23 +137,23 @@ for i in 1:10
     end
 
     # Smooth
-    global smooth_prj_1_idx = [ mean(prj_1_idx[i:i+9]) for i = 1:10:length(prj_1_idx)-9 ]
-    global smooth_prj_2_idx = [ mean(prj_2_idx[i:i+9]) for i = 1:10:length(prj_2_idx)-9 ]
-    global smooth_prj_3_idx = [ mean(prj_3_idx[i:i+9]) for i = 1:10:length(prj_3_idx)-9 ]
+#     global smooth_prj_1_idx = [ mean(prj_1_idx[i:i+9]) for i = 1:10:length(prj_1_idx)-9 ]
+#     global smooth_prj_2_idx = [ mean(prj_2_idx[i:i+9]) for i = 1:10:length(prj_2_idx)-9 ]
+#     global smooth_prj_3_idx = [ mean(prj_3_idx[i:i+9]) for i = 1:10:length(prj_3_idx)-9 ]
 
     global smooth_prj_1_phs = [ mean(prj_1_phs[i:i+9]) for i = 1:10:length(prj_1_phs)-9 ]
     global smooth_prj_2_phs = [ mean(prj_2_phs[i:i+9]) for i = 1:10:length(prj_2_phs)-9 ]
     global smooth_prj_3_phs = [ mean(prj_3_phs[i:i+9]) for i = 1:10:length(prj_3_phs)-9 ]
 
-    sym_smooth_prj_1_ctv_idx = Symbol("smooth_prj_1_", idx[i], "_idx")
-    sym_smooth_prj_2_ctv_idx = Symbol("smooth_prj_2_", idx[i], "_idx")
-    sym_smooth_prj_3_ctv_idx = Symbol("smooth_prj_3_", idx[i], "_idx")
-    sym_smooth_prj_1_ctv_phs = Symbol("smooth_prj_1_", phs[i], "_phs")
-    sym_smooth_prj_2_ctv_phs = Symbol("smooth_prj_2_", phs[i], "_phs")
-    sym_smooth_prj_3_ctv_phs = Symbol("smooth_prj_3_", phs[i], "_phs")
-    eval(:($sym_smooth_prj_1_ctv_idx = smooth_prj_1_idx))
-    eval(:($sym_smooth_prj_2_ctv_idx = smooth_prj_2_idx))
-    eval(:($sym_smooth_prj_3_ctv_idx = smooth_prj_3_idx))
+#     sym_smooth_prj_1_ctv_idx = Symbol("smooth_prj_1_", idx[i], "_idx")
+#     sym_smooth_prj_2_ctv_idx = Symbol("smooth_prj_2_", idx[i], "_idx")
+#     sym_smooth_prj_3_ctv_idx = Symbol("smooth_prj_3_", idx[i], "_idx")
+    sym_smooth_prj_1_ctv_phs = Symbol("smooth_prj_1_", PH, "_phs")
+    sym_smooth_prj_2_ctv_phs = Symbol("smooth_prj_2_", PH, "_phs")
+    sym_smooth_prj_3_ctv_phs = Symbol("smooth_prj_3_", PH, "_phs")
+#     eval(:($sym_smooth_prj_1_ctv_idx = smooth_prj_1_idx))
+#     eval(:($sym_smooth_prj_2_ctv_idx = smooth_prj_2_idx))
+#     eval(:($sym_smooth_prj_3_ctv_idx = smooth_prj_3_idx))
     eval(:($sym_smooth_prj_1_ctv_phs = smooth_prj_1_phs))
     eval(:($sym_smooth_prj_2_ctv_phs = smooth_prj_2_phs))
     eval(:($sym_smooth_prj_3_ctv_phs = smooth_prj_3_phs)) 
@@ -174,16 +173,17 @@ nb['cells'] = [
     nbf.v4.new_markdown_cell(cell_5)
 ]
 
-for ph in range(30, 80, 5):
+for ph in range(20, 80, 5):
+    PH = ph / 10
     celda_ph=(r"""plt_prj_1_2_""" + str(ph) +r"""_phs = histogram2d(smooth_prj_1_""" + str(ph) + r"""_phs, smooth_prj_2_""" + str(ph) + r"""_phs, 
-        title = string("PCA projections - pH = ", """ + str(ph) + r"""),
+        title = string("PCA projections - pH = ", """ + str(PH) + r"""),
         xlims = (-1, 1), ylims = (-1, 1),
         xticks = [-.9 ; -.5 ; 0. ;.5 ; .9], yticks = [-.9 ; -.5 ; 0. ;.5 ; .9],
         yaxis = "PCA 2", xaxis = "PCA 1",
         colorbar_title = "Frame count",
         guidefont = font(22, "Arial"), tickfont = font(16, "Arial"),
         legendfont = font(16, "Arial"), #clims = (0, 15),
-        nbins = 120, seriescolor = :blues, grid = false)
+        nbins = 20, seriescolor = :blues, grid = false)
     """).strip()
     nb['cells'].append(nbf.v4.new_code_cell(celda_ph))
 
@@ -192,7 +192,7 @@ celda_titulo=r"""
 """.strip()
 nb['cells'].append(nbf.v4.new_markdown_cell(celda_titulo))
 
-for idx in range(1, 11):
+for idx in range(1, 13):
     celda_idx=r"""plt_prj_1_2_""" + str(idx) + r"""_idx = histogram2d(smooth_prj_1_""" + str(idx) + r"""_idx, smooth_prj_2_""" + str(idx) + r"""_idx, 
         title = string("PCA projections - idx = ", """ + str(idx) + r"""),
         xlims = (-1, 1), ylims = (-1, 1),
@@ -201,10 +201,9 @@ for idx in range(1, 11):
         colorbar_title = "Frame count",
         guidefont = font(22, "Arial"), tickfont = font(16, "Arial"),
         legendfont = font(16, "Arial"), #clims = (0, 15),
-        nbins = 120, seriescolor = :blues, grid = false)
+        nbins = 20, seriescolor = :blues, grid = false)
     """.strip()
-    nb['cells'].append(nbf.v4.new_code_cell(celda_idx))
-
+    nb['cells'].append(nbf.v4.new_markdown_cell(celda_idx))
 
 nb['metadata'] = {'kernelspec': {'display_name': 'Julia 1.5.0', 'language': 'julia', 'name': 'julia-1.5'}}
 
