@@ -13,43 +13,43 @@ do
     phh=$(echo $i | cut -d ";" -f 2)
     
     # PCA por idx
-    mkdir ${k}
-    sed s/30/${ph}/g plantillas/${cpp_pca} > ${k}/${cpp_pca}
-    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_pca}
-    sed -i s/apo/${pdb}/g ${k}/${cpp_pca}
-
-    sed s/30/${ph}/g plantillas/${cpp_fit} > ${k}/${cpp_fit}
-    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_fit}
-    sed -i s/apo/${pdb}/g ${k}/${cpp_fit}
-
-    sed s/30/${ph}/g plantillas/${cpp_rms} > ${k}/${cpp_rms}
-    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_rms}
-    sed -i s/apo/${pdb}/g ${k}/${cpp_rms}
-
-    cd ${k}
-    cpptraj < ${cpp_pca}
-    cpptraj < ${cpp_fit}
-    cpptraj < ${cpp_rms}
-    cd ..
+#    mkdir ${k}
+#    sed s/3.0/${phh}/g plantillas/${cpp_pca} > ${k}/${cpp_pca}
+#    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_pca}
+#    sed -i s/apo/${pdb}/g ${k}/${cpp_pca}
+#
+#    sed s/3.0/${phh}/g plantillas/${cpp_fit} > ${k}/${cpp_fit}
+#    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_fit}
+#    sed -i s/apo/${pdb}/g ${k}/${cpp_fit}
+#
+#    sed s/3.0/${phh}/g plantillas/${cpp_rms} > ${k}/${cpp_rms}
+#    sed -i s/apo_1/${pdb}_${k}/g ${k}/${cpp_rms}
+#    sed -i s/apo/${pdb}/g ${k}/${cpp_rms}
+#
+#    cd ${k}
+#    cpptraj < ${cpp_pca}
+#    cpptraj < ${cpp_fit}
+#    cpptraj < ${cpp_rms}
+#    cd ..
 
     # PCA por pH
-    mkdir ${ph}ph
-    sed s/30/${ph}/g plantillas/${cpp_pca} > ${ph}ph/${cpp_pca}
-    sed -i s/apo_1/${pdb}_${ph}/g ${ph}ph/${cpp_pca}
-    sed -i s/apo/${pdb}/g ${ph}ph/${cpp_pca}
-    sed -i s/pdt/all_pdt/g ${ph}ph/${cpp_pca}
+    mkdir ${phh}
+    sed s/3.0/${phh}/g plantillas/${cpp_pca} > ${phh}/${cpp_pca}
+    sed -i s/apo_1/${pdb}_${phh}/g ${phh}/${cpp_pca}
+    sed -i s/apo/${pdb}/g ${phh}/${cpp_pca}
+    sed -i s/pdt/all_pdt/g ${phh}/${cpp_pca}
 
-    sed s/30/${ph}/g plantillas/${cpp_fit} > ${ph}ph/${cpp_fit}
-    sed -i s/apo_1/${pdb}_${ph}/g ${ph}ph/${cpp_fit}
-    sed -i s/apo/${pdb}/g ${ph}ph/${cpp_fit}
-    sed -i s/pdt/all_pdt/g ${ph}ph/${cpp_fit}
+    sed s/3.0/${phh}/g plantillas/${cpp_fit} > ${phh}/${cpp_fit}
+    sed -i s/apo_1/${pdb}_${phh}/g ${phh}/${cpp_fit}
+    sed -i s/apo/${pdb}/g ${phh}/${cpp_fit}
+    sed -i s/pdt/all_pdt/g ${phh}/${cpp_fit}
 
-    sed s/30/${ph}/g plantillas/${cpp_rms} > ${ph}ph/${cpp_rms}
-    sed -i s/apo_1/${pdb}_${ph}/g ${ph}ph/${cpp_rms}
-    sed -i s/apo/${pdb}/g ${ph}ph/${cpp_rms}
-    sed -i s/pdt/all_pdt/g ${ph}ph/${cpp_rms}
+    sed s/3.0/${phh}/g plantillas/${cpp_rms} > ${phh}/${cpp_rms}
+    sed -i s/apo_1/${pdb}_${phh}/g ${phh}/${cpp_rms}
+    sed -i s/apo/${pdb}/g ${phh}/${cpp_rms}
+    sed -i s/pdt/all_pdt/g ${phh}/${cpp_rms}
 
-    cd ${ph}ph
+    cd ${phh}
     cpptraj < ${cpp_pca}
     cpptraj < ${cpp_fit}
     cpptraj < ${cpp_rms}
