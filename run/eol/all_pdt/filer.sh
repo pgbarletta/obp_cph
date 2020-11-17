@@ -1,44 +1,19 @@
 #!/bin/bash
 
-pdb="eol"
+pdb1=apo
+pdb2=eol
 
-for i in `cat lista`
+for PH in 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5
 do
-    ph=$(echo $i | cut -d ";" -f 1)
-    phh=$(echo $i | cut -d ";" -f 2)
-    mkdir ${ph}ph
-    sed s/30/${ph}/g plantillas/get_p_cpp > ${ph}ph/get_p_cpp
-    sed s/30/${ph}/g plantillas/get_p1_cpp > ${ph}ph/get_p1_cpp
-    sed s/30/${ph}/g plantillas/get_p2_cpp > ${ph}ph/get_p2_cpp
-    sed s/30/${ph}/g plantillas/get_p3_cpp > ${ph}ph/get_p3_cpp
-    sed s/30/${ph}/g plantillas/get_p4_cpp > ${ph}ph/get_p4_cpp
-    sed s/30/${ph}/g plantillas/get_p5_cpp > ${ph}ph/get_p5_cpp
-    sed s/30/${ph}/g plantillas/get_p6_cpp > ${ph}ph/get_p6_cpp
-    sed s/30/${ph}/g plantillas/get_p7_cpp > ${ph}ph/get_p7_cpp
+    mkdir ${PH}
 
-    sed s/3.0/${phh}/g plantillas/get_p_cpp > ${ph}ph/get_p_cpp
-    sed s/3.0/${phh}/g plantillas/get_p1_cpp > ${ph}ph/get_p1_cpp
-    sed s/3.0/${phh}/g plantillas/get_p2_cpp > ${ph}ph/get_p2_cpp
-    sed s/3.0/${phh}/g plantillas/get_p3_cpp > ${ph}ph/get_p3_cpp
-    sed s/3.0/${phh}/g plantillas/get_p4_cpp > ${ph}ph/get_p4_cpp
-    sed s/3.0/${phh}/g plantillas/get_p5_cpp > ${ph}ph/get_p5_cpp
-    sed s/3.0/${phh}/g plantillas/get_p6_cpp > ${ph}ph/get_p6_cpp
-    sed s/3.0/${phh}/g plantillas/get_p7_cpp > ${ph}ph/get_p7_cpp
+    sed "s/remdtrajvalues 3.0/remdtrajvalues ${PH}/g" plantillas/get_ph_cpp > ${PH}/get_ph_cpp
+    sed -i "s/${pdb1}_3.0/${pdb2}_${PH}/g" ${PH}/get_ph_cpp
+    sed -i "s/${pdb1}/${pdb2}/g" ${PH}/get_ph_cpp
 
-    sed s/30/${ph}/g plantillas/strip_cpp > ${ph}ph/strip_cpp
-    cpptraj < ${ph}ph/get_p_cpp
-    cpptraj < ${ph}ph/get_p1_cpp
-    cpptraj < ${ph}ph/get_p2_cpp
-    cpptraj < ${ph}ph/get_p3_cpp
-    cpptraj < ${ph}ph/get_p4_cpp
-    cpptraj < ${ph}ph/get_p5_cpp
-    cpptraj < ${ph}ph/get_p6_cpp
-    cpptraj < ${ph}ph/get_p7_cpp
-    cd ${ph}ph
-    mv ../*nc .
-    cpptraj < strip_cpp
-    rm *_${pdb}.nc
+    cd ${PH}
+    cpptraj < get_ph_cpp
     cd ..
-done
 
+done
 exit 0
