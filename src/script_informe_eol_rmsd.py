@@ -19,29 +19,28 @@ home = "/home/pbarletta/labo/20/cph_obp/"
 dir_eol_pdt = string(home, "run/eol/pdt/")
 dir_eol_all_pdt = string(home, "run/eol/all_pdt/")
 
-nstlim = 19500
-phs = collect(30:5:75)
-idx = collect(1:10)
-pdt_steps = collect(0:1:7)
-titrable_cnt = 36
-titrable_resis = [4, 5, 7, 11, 13, 18, 20, 24, 27, 30, 33, 37, 39,
-    40, 41, 42, 48, 52, 58, 59, 64, 69, 73, 77, 78, 82, 87, 93, 94,
-    97, 99, 102, 109, 111, 114, 117];
-titrable_resnames = ["GL4", "GL4", "LYS", "HIP", "GL4", "LYS", "GL4", "AS4", "LYS",
-    "AS4", "GL4", "AS4", "GL4", "AS4", "LYS", "LYS", "GL4", "LYS",
-    "AS4", "LYS", "LYS", "LYS", "GL4", "AS4", "GL4", "LYS", "AS4",
-    "GL4", "GL4", "HIP", "LYS", "LYS", "LYS", "LYS", "LYS", "AS4"];
+nstlim = 12000
+phs = collect(2.0:.5:7.5)
+idx = collect(1:12)
+
+titrable_resis = [4, 5, 11, 13, 20, 24, 30, 33, 37, 39, 40,
+    48, 58, 73, 77, 78, 87, 93, 94, 97, 117]
+titrable_resnames = ["GL4", "GL4", "HIP", "GL4", "GL4", "AS4",
+    "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4",
+    "GL4", "AS4", "GL4", "GL4", "HIP", "AS4"]
+titrable_cnt = length(titrable_resis)
 """.strip()
 
 cell_2=r"""
-for i in 1:10
-    global rmsd_eol_idx = readdlm(joinpath(dir_eol_pdt, string(phs[i], "ph"),
+for i in 1:length(idx)
+    PH = convert(Int64, phs[i] * 10)
+    global rmsd_eol_idx = readdlm(joinpath(dir_eol_pdt, string(phs[i]),
             string("rmsd_eol_", idx[i])))[2:end, 2]
-    global rmsd_eol_ph = readdlm(joinpath(dir_eol_all_pdt, string(phs[i], "ph"),
+    global rmsd_eol_ph = readdlm(joinpath(dir_eol_all_pdt, string(phs[i]),
             string("rmsd_eol_", phs[i])))[2:end, 2]
 
     sym_rmsd_eol_idx = Symbol("rmsd_eol_", idx[i])
-    sym_rmsd_eol_ph = Symbol("rmsd_eol_", phs[i])
+    sym_rmsd_eol_ph = Symbol("rmsd_eol_", PH)
     eval(:($sym_rmsd_eol_idx = rmsd_eol_idx))
     eval(:($sym_rmsd_eol_ph = rmsd_eol_ph))
 end
@@ -58,8 +57,9 @@ nb['cells'] = [
     nbf.v4.new_markdown_cell(cell_3)
 ]
 
-for ph in range(30, 80, 5):
-    celda_ph = (r"""plot(collect(1:nstlim) ./ 100, """ + "rmsd_eol_" + str(ph) + r""", 
+for PH in range(20, 80, 5):
+    ph = PH / 10
+    celda_ph = (r"""plot(collect(1:nstlim) ./ 100, """ + "rmsd_eol_" + str(PH) + r""", 
         title = string("RMSD - pH = ", """ + str(ph) + r"""), size = (750, 400),
         yaxis = "RMSD [A]", xaxis = "Time [ns]")
     """).strip()
