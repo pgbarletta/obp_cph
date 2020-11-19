@@ -2,7 +2,7 @@
 # `nb_templater` generated Python script
 # Generated from .ipynb template: eol_hbo.ipynb
 # www.github.com/ismailuddin/jupyter-nb-templater/
-# Generated on: 2020-10-20 18:36 
+# Generated on: 2020-11-10 21:43 
 
 import nbformat as nbf 
 import sys
@@ -19,36 +19,35 @@ cell_1=r"""
 dir_eol_hbo = "/home/pbarletta/labo/20/cph_obp/run/eol/hbond"
 
 aa = 119
-nstlim = 19500
-phs = collect(30:5:75)
-idx = collect(1:10)
-pdt_steps = collect(0:1:7)
-titratable_cnt = 36
-titratable_resis = [4, 5, 7, 11, 13, 18, 20, 24, 27, 30, 33, 37, 39,
-    40, 41, 42, 48, 52, 58, 59, 64, 69, 73, 77, 78, 82, 87, 93, 94,
-    97, 99, 102, 109, 111, 114, 117];
-titratable_resnames = ["GL4", "GL4", "LYS", "HIP", "GL4", "LYS", "GL4", "AS4", "LYS",
-    "AS4", "GL4", "AS4", "GL4", "AS4", "LYS", "LYS", "GL4", "LYS",
-    "AS4", "LYS", "LYS", "LYS", "GL4", "AS4", "GL4", "LYS", "AS4",
-    "GL4", "GL4", "HIP", "LYS", "LYS", "LYS", "LYS", "LYS", "AS4"]
+nstlim = 12000
+phs = collect(2.0:.5:7.5)
+idx = collect(1:12)
 
-idx_of_titratable = fill(0, aa)
-[ idx_of_titratable[titratable_resis[i]] = i for i in 1:titratable_cnt ];
+titrable_resis = [4, 5, 11, 13, 20, 24, 30, 33, 37, 39, 40,
+    48, 58, 73, 77, 78, 87, 93, 94, 97, 117]
+titrable_resnames = ["GL4", "GL4", "HIP", "GL4", "GL4", "AS4",
+    "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4",
+    "GL4", "AS4", "GL4", "GL4", "HIP", "AS4"]
+titrable_cnt = length(titrable_resis)
 
-titratable_residues = [ string(titratable_resnames[i], "_", titratable_resis[i]) 
-    for i in 1:titratable_cnt ];
+idx_of_titrable = fill(0, aa)
+[ idx_of_titrable[titrable_resis[i]] = i for i in 1:titrable_cnt ];
+
+titrable_residues = [ string(titrable_resnames[i], "_", titrable_resis[i]) 
+    for i in 1:titrable_cnt ];
 """.strip()
 
 cell_2=r"""
-for i in 1:10
-    global nhb_eol_idx = convert(Array{Float64, 1}, readdlm(joinpath(dir_eol_hbo, string(idx[i]),
-            string("nhb_eol_", idx[i])))[2:end, 2])
-    global nhb_eol_phs = convert(Array{Float64, 1}, readdlm(joinpath(dir_eol_hbo, string(phs[i], "ph"),
+for i in 1:12
+    PH = convert(Int64, phs[i] * 10)
+#     global nhb_eol_idx = convert(Array{Float64, 1}, readdlm(joinpath(dir_eol_hbo, string(idx[i]),
+#             string("nhb_eol_", idx[i])))[2:end, 2])
+    global nhb_eol_phs = convert(Array{Float64, 1}, readdlm(joinpath(dir_eol_hbo, string(phs[i]),
             string("nhb_eol_", phs[i])))[2:end, 2])
 
-    sym_nhb_eol_idx = Symbol("nhb_eol_", idx[i])
-    sym_nhb_eol_phs = Symbol("nhb_eol_", phs[i])
-    eval(:($sym_nhb_eol_idx = nhb_eol_idx))
+#     sym_nhb_eol_idx = Symbol("nhb_eol_", idx[i])
+    sym_nhb_eol_phs = Symbol("nhb_eol_", PH)
+#     eval(:($sym_nhb_eol_idx = nhb_eol_idx))
     eval(:($sym_nhb_eol_phs = nhb_eol_phs))
 end
 """.strip()
@@ -64,41 +63,43 @@ nb['cells'] = [
     nbf.v4.new_markdown_cell(cell_3)
 ]
 
-for ph in range(30, 80, 5):
+
+for ph in range(20, 80, 5):
+    PH = ph / 10
     celda_ph = (r"""min_nhb = 20
-    max_nhb = 90
-    plot(collect(1:nstlim) ./ 100, nhb_eol_""" + str(ph) + r""",
-        title = string("Total # of Hbonds - pH = ",""" + str(ph) + r"""), size = (750, 400),
-        ylims = (min_nhb, max_nhb), label = false,
-        linecolor = Colors.colorant"Brown",
-        yaxis = "# of Hbonds", xaxis = "Time [ns]")
-    """).strip()
+max_nhb = 90
+plot(collect(1:nstlim) ./ 100, nhb_eol_""" + str(ph) + r""",
+    title = string("Total # of Hbonds - pH = ",""" + str(PH) + r"""), size = (750, 400),
+    ylims = (min_nhb, max_nhb), label = false,
+    linecolor = Colors.colorant"Brown",
+    yaxis = "# of Hbonds", xaxis = "Time [ns]")
+""").strip()
 
     celda_ph_his=(r"""
-    st = 2
-    bin_nhb = collect(min_nhb:st:max_nhb)
-    wgh_nhb = fill(1.0, length(nhb_eol_""" + str(ph) + r"""))
-    
-    # Histograma ponderado
-    Wbins_nhb, Whis_nhb = JUMD.weightedHist(nhb_eol_""" + str(ph) + r""", bin_nhb, wgh_nhb, true, false);
-    
-    bar(Wbins_nhb, Whis_nhb,
-        xlims = (min_nhb, max_nhb), ylims = (0, .2),
-        xticks = min_nhb+st:10:max_nhb+st,
-        linecolor = false, fillcolor = Colors.colorant"Brown",
-        grid = false, legend = false,
-        guidefont = font(18, "Arial"), tickfont = font(12, "Arial"),
-        legendfont = font(12, "Arial"),
-        title = string("Total # of Hbonds histogram - pH = ",""" + str(ph) + r"""),
-        yaxis = "Relative probability", xaxis = "# of Hbonds")
-    """).strip()
-    
+st = 2
+bin_nhb = collect(min_nhb:st:max_nhb)
+wgh_nhb = fill(1.0, length(nhb_eol_""" + str(ph) + r"""))
+
+# Histograma ponderado
+Wbins_nhb, Whis_nhb = JUMD.weightedHist(nhb_eol_""" + str(ph) + r""", bin_nhb, wgh_nhb, true, false);
+
+bar(Wbins_nhb, Whis_nhb,
+    xlims = (min_nhb, max_nhb), ylims = (0, .2),
+    xticks = min_nhb+st:10:max_nhb+st,
+    linecolor = false, fillcolor = Colors.colorant"Brown",
+    grid = false, legend = false,
+    guidefont = font(18, "Arial"), tickfont = font(12, "Arial"),
+    legendfont = font(12, "Arial"),
+    title = string("Total # of Hbonds histogram - pH = ",""" + str(PH) + r"""),
+    yaxis = "Relative probability", xaxis = "# of Hbonds")
+""").strip()
+
     nb['cells'].append(nbf.v4.new_code_cell(celda_ph))
     nb['cells'].append(nbf.v4.new_code_cell(celda_ph_his))
 
 
 celda_tabla_ph=r"""vals = vcat("""
-for ph in range(30, 80, 5):
+for ph in range(20, 80, 5):
     if ph == 75:
         celda_tabla_ph = celda_tabla_ph + (r"""
         [ mean(nhb_eol_""" + str(ph) + r""") std(nhb_eol_""" + str(ph) + r""") std(nhb_eol_""" + str(ph) + r""") / mean(nhb_eol_""" + str(ph) + r""") ])""").strip() + "\n" + "\n"
@@ -106,8 +107,8 @@ for ph in range(30, 80, 5):
 
     celda_tabla_ph = celda_tabla_ph + (r"""
     [ mean(nhb_eol_""" + str(ph) + r""") std(nhb_eol_""" + str(ph) + r""") std(nhb_eol_""" + str(ph) + r""") / mean(nhb_eol_""" + str(ph) + r""") ],""").strip() + "\n"
-    
-    
+
+
 celda_tabla_ph= celda_tabla_ph + r"""NamedArray(vals, (string.(phs), ["μ" ; "std" ; "μ/std"]))"""
 nb['cells'].append(nbf.v4.new_code_cell(celda_tabla_ph))
 
@@ -116,57 +117,57 @@ celda_titulo=r"""
 """.strip()
 nb['cells'].append(nbf.v4.new_markdown_cell(celda_titulo))
 
+
 for idx in range(1, 11):
     celda_idx=(r"""
-    plot(collect(1:nstlim) ./ 100, nhb_eol_""" + str(idx) + r""",
-        title = string("nhbume - idx = ", """ + str(idx) + r"""), size = (750, 400),
-        ylims = (min_nhb, max_nhb), label = false,
-        linecolor = Colors.colorant"CornflowerBlue",
-        yaxis = "nhbume [A3]", xaxis = "Time [ns]")
-    """).strip()
-    
-    celda_idx=(r"""
-    st = 2
-    bin_nhb = collect(min_nhb:st:max_nhb)
-    wgh_nhb = fill(1.0, length(nhb_eol_""" + str(idx) + r"""))
-    
-    # Histograma ponderado
-    Wbins_nhb, Whis_nhb = JUMD.weightedHist(nhb_eol_""" + str(idx) + r""", bin_nhb, wgh_nhb, true, false);
-    
-    bar(Wbins_nhb, Whis_nhb,
-        xlims = (min_nhb, max_nhb), ylims = (0, .2),
-        xticks = min_nhb+st:10:max_nhb+st,
-        linecolor = false, fillcolor = Colors.colorant"CornflowerBlue",
-        grid = false, legend = false,
-        guidefont = font(18, "Arial"), tickfont = font(12, "Arial"),
-        legendfont = font(12, "Arial"),
-        title = string("H bonds count histogram - pH = ", """ + str(idx) + r"""),
-        yaxis = "Relative probability", xaxis = "# of Hbonds")
-    """).strip()
+plot(collect(1:nstlim) ./ 100, nhb_eol_""" + str(idx) + r""",
+    title = string("nhbume - idx = ", """ + str(idx) + r"""), size = (750, 400),
+    ylims = (min_nhb, max_nhb), label = false,
+    linecolor = Colors.colorant"CornflowerBlue",
+    yaxis = "nhbume [A3]", xaxis = "Time [ns]")
+""").strip()
 
-    nb['cells'].append(nbf.v4.new_code_cell(celda_idx))
-    nb['cells'].append(nbf.v4.new_code_cell(celda_idx))
+    celda_idx=(r"""
+st = 2
+bin_nhb = collect(min_nhb:st:max_nhb)
+wgh_nhb = fill(1.0, length(nhb_eol_""" + str(idx) + r"""))
+
+# Histograma ponderado
+Wbins_nhb, Whis_nhb = JUMD.weightedHist(nhb_eol_""" + str(idx) + r""", bin_nhb, wgh_nhb, true, false);
+
+bar(Wbins_nhb, Whis_nhb,
+    xlims = (min_nhb, max_nhb), ylims = (0, .2),
+    xticks = min_nhb+st:10:max_nhb+st,
+    linecolor = false, fillcolor = Colors.colorant"CornflowerBlue",
+    grid = false, legend = false,
+    guidefont = font(18, "Arial"), tickfont = font(12, "Arial"),
+    legendfont = font(12, "Arial"),
+    title = string("H bonds count histogram - pH = ", """ + str(idx) + r"""),
+    yaxis = "Relative probability", xaxis = "# of Hbonds")
+""").strip()
+
+    nb['cells'].append(nbf.v4.new_markdown_cell(celda_idx))
+    nb['cells'].append(nbf.v4.new_markdown_cell(celda_idx))
 
 
 celda_tabla_idx=r"""vals = vcat("""
-for idx in range(1, 11):
-    if idx == 10:
+for idx in range(1, 13):
+    if idx == 12:
         celda_tabla_idx = celda_tabla_idx + (r"""
         [ mean(nhb_eol_""" + str(idx) + r""") std(nhb_eol_""" + str(idx) + r""") std(nhb_eol_""" + str(idx) + r""") / mean(nhb_eol_""" + str(idx) + r""") ])""").strip() + "\n" + "\n"
         break
 
     celda_tabla_idx = celda_tabla_idx + (r"""
     [ mean(nhb_eol_""" + str(idx) + r""") std(nhb_eol_""" + str(idx) + r""") std(nhb_eol_""" + str(idx) + r""") / mean(nhb_eol_""" + str(idx) + r""") ],""").strip() + "\n"
-    
-    
+
+
 celda_tabla_idx= celda_tabla_idx + r"""NamedArray(vals, (string.(idx), ["μ" ; "std" ; "μ/std"]))"""
-nb['cells'].append(nbf.v4.new_code_cell(celda_tabla_idx))
+nb['cells'].append(nbf.v4.new_markdown_cell(celda_tabla_idx))
 
 celda_tituol=r"""
 ## Conteo de puentesH de residuos titulables
 """.strip()
 nb['cells'].append(nbf.v4.new_markdown_cell(celda_titulo))
-
 
 cell_12=r"""
 nhb_cnt_eol_acc_phs = Array{Int64, 2}(undef, aa, 0)
@@ -176,10 +177,10 @@ for ph in phs
     nhb_ser_eol_acc_ph = fill(0, (aa, nstlim))
     nhb_ser_eol_don_ph = fill(0, (aa, nstlim))
     
-    temporal_acc = readdlm(joinpath(dir_eol_hbo, string(ph, "ph"),
+    temporal_acc = readdlm(joinpath(dir_eol_hbo, string(ph),
         string("series_nhb_eol_gl4_as4_lys_acc_", ph)), header = true)
     
-    temporal_don = readdlm(joinpath(dir_eol_hbo, string(ph, "ph"),
+    temporal_don = readdlm(joinpath(dir_eol_hbo, string(ph),
         string("series_nhb_eol_gl4_as4_lys_don_", ph)), header = true)
     
     res_hbo_eol_acc_phs = convert(Array{Bool, 2}, temporal_acc[1][:, 2:end])
@@ -224,17 +225,12 @@ nhb_cnt_eol_phs = nhb_cnt_eol_acc_phs .+ nhb_cnt_eol_don_phs;
 """.strip()
 
 cell_14=r"""
-heatmap(titratable_residues[1:12], (phs ./ 10), nhb_cnt_eol_phs[titratable_resis[1:12], :],
+heatmap(titrable_residues[1:11], (phs ./ 10), nhb_cnt_eol_phs[titrable_resis[1:11], :],
     xrotation = 60, color = :bilbao)
 """.strip()
 
 cell_15=r"""
-heatmap(titratable_residues[13:24], (phs ./ 10), nhb_cnt_eol_phs[titratable_resis[13:24], :],
-    xrotation = 60, color = :bilbao)
-""".strip()
-
-cell_16=r"""
-heatmap(titratable_residues[25:end], (phs ./ 10), nhb_cnt_eol_phs[titratable_resis[25:end], :],
+heatmap(titrable_residues[12:21], (phs ./ 10), nhb_cnt_eol_phs[titrable_resis[12:21], :],
     xrotation = 60, color = :bilbao)
 """.strip()
 
@@ -242,7 +238,6 @@ nb['cells'].append(nbf.v4.new_code_cell(cell_12))
 nb['cells'].append(nbf.v4.new_code_cell(cell_13))
 nb['cells'].append(nbf.v4.new_code_cell(cell_14))
 nb['cells'].append(nbf.v4.new_code_cell(cell_15))
-nb['cells'].append(nbf.v4.new_code_cell(cell_16))
 
 
 nb['metadata'] = {'kernelspec': {'display_name': 'Julia 1.5.0', 'language': 'julia', 'name': 'julia-1.5'}}

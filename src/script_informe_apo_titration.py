@@ -2,11 +2,10 @@
 # `nb_templater` generated Python script
 # Generated from .ipynb template: apo_titration.ipynb
 # www.github.com/ismailuddin/jupyter-nb-templater/
-# Generated on: 2020-10-12 14:40 
+# Generated on: 2020-11-10 11:22 
 
 import nbformat as nbf 
 import sys
-import re
 nb = nbf.v4.new_notebook() 
 
 cell_0=r"""
@@ -45,26 +44,20 @@ cell_2=r"""
 # Get ready
 home = "/home/pbarletta/labo/20/cph_obp/"
 apo_cph_out = string(home, "run/apo/pdt/cph_outputs/")
-apo_cph_pre_out = string(home, "run/apo/pre_pdt/cph_outputs/")
 
-phs = collect(30:5:75)
-pdt_steps = collect(0:1:7)
+phs = [ 2.0 ; 2.5 ; 3.0 ; 3.5 ; 4.0 ; 4.5 ; 5.0 ; 5.5 ; 6.0 ; 6.5 ; 7.0 ; 7.5 ]
+pdt_steps = 1
 suffix_pka_file = "_pka"
 suffix_pop_file = "_pop"
-titrable_cnt = 36
-titrable_resis = [4, 5, 7, 11, 13, 18, 20, 24, 27, 30, 33, 37, 39,
-    40, 41, 42, 48, 52, 58, 59, 64, 69, 73, 77, 78, 82, 87, 93, 94,
-    97, 99, 102, 109, 111, 114, 117];
-titrable_resnames = ["GL4", "GL4", "LYS", "HIP", "GL4", "LYS", "GL4", "AS4", "LYS",
-    "AS4", "GL4", "AS4", "GL4", "AS4", "LYS", "LYS", "GL4", "LYS",
-    "AS4", "LYS", "LYS", "LYS", "GL4", "AS4", "GL4", "LYS", "AS4",
-    "GL4", "GL4", "HIP", "LYS", "LYS", "LYS", "LYS", "LYS", "AS4"]
+titrable_resis = [4, 5, 11, 13, 20, 24, 30, 33, 37, 39, 40,
+    48, 58, 73, 77, 78, 87, 93, 94, 97, 117]
+titrable_resnames = ["GL4", "GL4", "HIP", "GL4", "GL4", "AS4",
+    "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4", "GL4", "AS4",
+    "GL4", "AS4", "GL4", "GL4", "HIP", "AS4"]
+titrable_cnt = length(titrable_resis)
 global const def_pka_as4 = 3.71
 global const def_pka_gl4 = 4.15
-global const def_pka_lys = 10.67
 global const def_pka_hip = 6.04;
-# global const def_pka_cyx = 8.14;
-# global const def_pka_tyr = 10.1;
 """.strip()
 
 cell_3=r"""
@@ -75,8 +68,6 @@ for i in 1:titrable_cnt
         def_res_pka[i] = def_pka_as4
     elseif titrable_resnames[i] == "GL4"
         def_res_pka[i] = def_pka_gl4
-    elseif titrable_resnames[i] == "LYS"
-        def_res_pka[i] = def_pka_lys
     elseif titrable_resnames[i] == "HIP"
         def_res_pka[i] = def_pka_hip
     end
@@ -84,7 +75,7 @@ end
 """.strip()
 
 cell_4=r"""
-## Leo los \_pop files de todas las corridas
+## Leo los \_pop files
 """.strip()
 
 cell_5=r"""
@@ -94,13 +85,13 @@ cell_5=r"""
 # Usaré estas poblaciones p/ ajustar la curva de Hill y obtener el valor de pKa.
 deprotonated_fraction =  Array{Float64, 2}(undef, titrable_cnt, length(phs))
 for i in 1:length(phs)
-    pop_filename = joinpath(apo_cph_out, "p", string(phs[i], suffix_pop_file))
+    pop_filename = joinpath(apo_cph_out, string(phs[i], "_pop"))
     deprotonated_fraction[:, i] = read_pop_file(pop_filename, titrable_resnames)
 end
 """.strip()
 
 cell_6=r"""
-## Leo los \_pka files, sólo de pre_pdt
+## Leo los \_pka files
 """.strip()
 
 cell_7=r"""
@@ -115,7 +106,7 @@ res_pka_pred_all = Array{Float64, 2}(undef, titrable_cnt, length(phs))
 res_pka_pred =  Array{Float64, 1}(undef, titrable_cnt)
 
 for i = 1:length(phs)
-    pka_file = readdlm(string(apo_cph_pre_out, phs[i], suffix_pka_file),
+    pka_file = readdlm(string(apo_cph_out, phs[i], "_pka"),
         header = true)[1][1:end-1, 1:end-1]    
     res_offset_all[:, i] = pka_file[:, 5]
     res_pka_pred_all[:, i] = pka_file[:, 7]
@@ -138,7 +129,7 @@ res_hil =  Array{Float64, 1}(undef, titrable_cnt)
 
 # Hill function
 @. f(x, hill_coef) = 1 / (1 + 10 ^(hill_coef[1]*(hill_coef[2] - x)) )
-xdata = phs ./ 10
+xdata = phs
 
 # Fit the curves
 for i = 1:titrable_cnt
@@ -157,18 +148,17 @@ cell_10=r"""
 """.strip()
 
 cell_11=r"""
-not_lys = titrable_resnames .!= "LYS"
-etiquetas = string.(titrable_resnames[not_lys], " ", titrable_resis[not_lys])
+etiquetas = string.(titrable_resnames, " ", titrable_resis)
 dif_res_pka = map(-, res_pka, def_res_pka);
 """.strip()
 
 cell_12=r"""
-bar(etiquetas[1:10], dif_res_pka[not_lys][1:10], label = :none,
+bar(etiquetas[1:10], dif_res_pka[1:10], label = :none,
     ylim = (-2.5, 2.5), ylabel = "ΔpKa")
 """.strip()
 
 cell_13=r"""
-bar(etiquetas[11:end], dif_res_pka[not_lys][11:end], label = :none,
+bar(etiquetas[11:end], dif_res_pka[11:end], label = :none,
     ylim = (-2.5, 2.5), ylabel = "ΔpKa")
 """.strip()
 
@@ -199,10 +189,10 @@ nb['cells'] = [
     nbf.v4.new_code_cell(cell_12),
     nbf.v4.new_code_cell(cell_13),
     nbf.v4.new_markdown_cell(cell_14),
-    nbf.v4.new_code_cell(cell_15)
+    nbf.v4.new_code_cell(cell_15),
 ]
 
-for i in range(1, 37):
+for i in range(1, 22):
     celda=(r"""i = """ + str(i) + r"""
     plot(x, titration_curve.(res_hil[i], res_pka[i], x),
         label = "LSQ Fit",
@@ -216,7 +206,6 @@ for i in range(1, 37):
     annotate!((res_pka[i] + 1.2), .4, 
         Plots.text(string("n = ", round(res_hil[i], digits = 2))))
     """).strip()
-    
     nb['cells'].append(nbf.v4.new_code_cell(celda))
 
 
