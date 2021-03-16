@@ -20,22 +20,20 @@ a pH.
 
 ##### Luego, obtengo los pKas y las poblaciones de c/ aminoácido: (ej. con la prote "apo")
 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_20 -o 20_pka --population 20_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_25 -o 25_pka --population 25_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_30 -o 30_pka --population 30_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_35 -o 35_pka --population 35_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_40 -o 40_pka --population 40_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_45 -o 45_pka --population 45_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_50 -o 50_pka --population 50_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_55 -o 55_pka --population 55_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_60 -o 60_pka --population 60_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_65 -o 65_pka --population 65_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_70 -o 70_pka --population 70_pop 
-cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_75 -o 75_pka --population 75_pop 
+Dentro de:
+```
+~/labo/20/reobp/run/apo/pdt/cph_outputs
+```
+
+hago:
+
+```
+./get_whole_pop_pka.sh 
+``` 
 
 ## Notas
 
-##### Residuos protonables:
+### Residuos protonables:
 
 4   GL4
 5   GL4
@@ -59,12 +57,19 @@ cphstats -i ~/labo/20/cph_obp/top_files/incph_apo reordered_cpouts.pH_75 -o 75_p
 97  HIP
 117 AS4
 
-##### 5
-
-# Rehago todo
+### Rehago todo
 
  - 1e/ 2e/ y pre_pdt/ ya no valen más
  - Tengo un bajón de Epotencial en la equilibración pq hice el calentamiento a V=cte y luego saqué los restraints
     a vol constante también. Finalmente pasé a Pr=cte p/ la equilibración y ahí se acomodó la caja (achicó, aumentó densidad)
     No creo q sea pbma.
  - Ahora hay nuevas topologías `apo.hmr.parm7` q tienen hydrogen mass reweighted. Permiten correr a 4fs
+
+###
+    eol presenta cambio conformacional entre pH bajo y alto. Hélice α Nt se tuerce y esto aparece hasta pH=5.5
+*/home/pbarletta/labo/20/cph_obp/run/eol/2cluster/kmeans/summary_kmean.dat* muestra q no puede hacerse estadística
+de esto.
+
+###
+
+    there's one protonation state report for each frame.
